@@ -33,14 +33,14 @@ def game(personalize):
     enemies = [Enemy(1,1) for i in range(enemies_quantity)]
 
     # display 3...2...1...
-    font_big = pg.font.SysFont(None, 300)
-
-    for i in range(3,0,-1):
-        text = font_big.render(f"{i}", True, (0,0,0))
-        display(board, player, enemies)
-        screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
-        pg.display.update()
-        clock.tick(1)
+    # font_big = pg.font.SysFont(None, 300)
+    #
+    # for i in range(3,0,-1):
+    #     text = font_big.render(f"{i}", True, (0,0,0))
+    #     display(board, player, enemies)
+    #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
+    #     pg.display.update()
+    #     clock.tick(1)
 
     font = pg.font.SysFont(None, 30)
 
@@ -55,7 +55,9 @@ def game(personalize):
                 if event.type == pg.QUIT:
                     running = False
                 # elif event.type == pg.KEYDOWN:
-                #     player.move()
+                #     player.move(event)
+            keys = pg.key.get_pressed()
+            player.move(keys)
 
             # if not(paused):
             #     for e in enemies: e.move(event, board.sizeInFields, food, speed_increase)

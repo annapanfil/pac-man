@@ -34,7 +34,6 @@ class Board():
                     pg.draw.rect(self.surface, self.light_color, rectangle)
 
 class Character():
-
     def __init__(self, x, y, color =  (175, 243, 98)):
         self.x = x
         self.y = y
@@ -49,26 +48,30 @@ class Character():
 
 class Player(Character):
     # player move, when key is pressed
+    def __init__(self, x, y, color =  (175, 243, 98)):
+        super().__init__(x,y,color)
+        self.left_key = pg.K_LEFT #, pg.K_a}
+        self.right_key = pg.K_RIGHT #, pg.K_d}
+        self.up_key = pg.K_UP #, pg.K_w}
+        self.down_key = pg.K_DOWN #, pg.K_s}
 
-    def move(self, event):
-        LEFT_KEYS = {pg.K_LEFT, pg.K_a}
-        RIGHT_KEYS = {pg.K_RIGHT, pg.K_d}
-        UP_KEYS = {pg.K_UP, pg.K_w}
-        DOWN_KEYS = {pg.K_DOWN, pg.K_s}
+    def move(self, key):
 
-        if event.key in LEFT_KEYS:
-            self.turn(LEFT)
-        elif event.key in RIGHT_KEYS:
-            self.turn(RIGHT)
-        elif event.key in UP_KEYS:
-            self.turn(UP)
-        elif event.key in DOWN_KEYS:
-            self.turn(DOWN)
-        elif event.key in {ord('p'), ord(' ')}:
+        direction = (0,0)
+
+        if key[self.left_key]:
+            direction = (-1,0)
+        elif key[self.right_key]:
+            direction = (1,0)
+        elif key[self.up_key]:
+            direction = (0,-1)
+        elif key[self.down_key]:
+            direction = (0,1)
+        elif key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
-        # else:
-                # print("Niepoprawny klawisz:", event.key)
 
+        self.x += direction[0]
+        self.y += direction[1]
 
 class Enemy(Character):
     # enemies move automatically
