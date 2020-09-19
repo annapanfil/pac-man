@@ -11,7 +11,7 @@ class GamePause(Exception):
         super(GamePause, self).__init__(*args, **kwargs)
 
 class Board():
-    def __init__(self, surface, pattern="pac_man/board1", field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
+    def __init__(self, surface, pattern="boards/board1", field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
         self.field_size = field_size
         self.surface = surface
         self.light_color = light_color
