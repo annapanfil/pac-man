@@ -16,7 +16,7 @@ class Board():
         self.surface = surface
         self.light_color = light_color
         self.dark_color = dark_color
-        self.pattern = loadtxt(fname=pattern, delimiter=" ", skiprows=0, dtype=int)
+        self.pattern = loadtxt(fname=pattern, delimiter=" ", skiprows=0, dtype=int) if type(pattern) == str else pattern    #plik lub tablica
 
     @property
     def sizeInFields(self):

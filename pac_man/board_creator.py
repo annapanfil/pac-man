@@ -1,6 +1,6 @@
 import pygame as pg
 import PySimpleGUI as sg
-from numpy import savetxt
+from numpy import savetxt, zeros
 from .classes import Board
 
 def board_menu() -> int:
@@ -30,7 +30,8 @@ def board_draw(size):
     screen = pg.display.set_mode((size, size))
     pg.display.set_caption("Board creator")
     clock = pg.time.Clock()
-    board = Board(surface = screen)
+    pixel = 20
+    board = Board(surface = screen, field_size = pixel, pattern = zeros((int(size/pixel), int(size/pixel)), dtype=int))
 
     running = True
     while running:
