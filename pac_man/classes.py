@@ -10,11 +10,12 @@ class GamePause(Exception):
         super(GamePause, self).__init__(*args, **kwargs)
 
 class Board():
-    def __init__(self, surface, field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
+    def __init__(self, surface, pattern, field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
         self.field_size = field_size
         self.surface = surface
         self.light_color = light_color
         self.dark_color = dark_color
+        self.pattern = pattern    #plik lub tablica
 
     @property
     def sizeInFields(self):
@@ -24,14 +25,21 @@ class Board():
     def screen_size(self):
         return self.surface.get_width()
 
+
     def display(self):
-        for i in range(self.sizeInFields):
-            for j in range(self.sizeInFields):
+        for i in range(len(self.pattern)):
+            for j in range(len(self.pattern[i])):
                 rectangle = pg.Rect((i*self.field_size, j*self.field_size), (self.field_size, self.field_size))
-                if (i+j)%2 == 0:
+                if self.pattern[j][i]==1:
                     pg.draw.rect(self.surface, self.dark_color, rectangle)
                 else:
                     pg.draw.rect(self.surface, self.light_color, rectangle)
+
+    def draw(self, position: tuple, color = 1):
+        x = int(position[0]/self.field_size)
+        y = int(position[1]/self.field_size)
+        # print(position, x, y)
+        self.pattern[y][x] = color
 
 class Character():
     def __init__(self, x, y, color =  (175, 243, 98)):

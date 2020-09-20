@@ -1,10 +1,12 @@
+from os import listdir
 from .gui import *
 from .game import *
 from .language import *
+from .board_creator import board_main
 
 def main():
     # default settings
-    if 'personalize' not in locals(): personalize = {'lang': 'pl', 'board_size': 480}
+    if 'personalize' not in locals(): personalize = {'lang': 'pl', 'board': listdir('./boards')[0]}
     lang = languages[personalize['lang']]
 
     choice = mainMenu(lang)
@@ -19,6 +21,10 @@ def main():
             lang = languages[personalize['lang']]
             choice = mainMenu(lang)
 
+        elif choice == 'creator':
+            board_main()
+            choice = mainMenu(lang)
+
         elif choice == 'info':
             info(lang)
             choice = mainMenu(lang)
@@ -26,3 +32,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # board_main()

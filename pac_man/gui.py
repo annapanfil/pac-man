@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import os
+from os import listdir
 from .language import *
 
 icon = "snake/snake.png"
@@ -25,6 +25,10 @@ def eventHandling(window):
         elif event == "-SETTINGS-":
             window.Close()
             return 'settings'
+
+        elif event == "-CREATOR-":
+            window.Close()
+            return 'creator'
 
         elif event == "-INFO-":
             window.Close()
@@ -60,10 +64,11 @@ def exitMenu(score, personalize):
     layout = [[sg.Text(lang['game_over'], font = 40, justification = 'center')],
               [sg.Text(lang['your_score'].format(score)+'\n', font = 30, justification = 'center')],
               [sg.Button(lang['play_again'], key="-PLAY-")],
-              [sg.Button(lang['settings'], key="-SETTINGS-"), sg.Button(lang['info'], key='-INFO-'), sg.Button(lang['exit'], key='-EXIT-')]]
+              [sg.Button(lang['settings'], key="-SETTINGS-"), sg.Button(lang['creator'], key='-CREATOR-'), sg.Button(lang['info'], key='-INFO-')],
+              [sg.Button(lang['exit'], key='-EXIT-')]]
 
     window = sg.Window(lang['exit_window'], layout, finalize=True, icon=icon,
-                        element_justification='center', size=(480,210), return_keyboard_events=True)
+                        element_justification='center', size=(480,230), return_keyboard_events=True)
 
     return eventHandling(window)
 
@@ -71,11 +76,10 @@ def settings(personalize):
     lang = languages[personalize['lang']]
 
     layout = [[sg.Text(lang['language']), sg.OptionMenu(languages.keys(), default_value=personalize['lang'], key='lang')],
-              [sg.Text(lang['board_size']), sg.Slider(range=(200, 800), default_value=personalize['board_size'],
-                resolution = 40, orientation='horizontal', key="board_size")],
+              [sg.Text(lang['board']), sg.OptionMenu(listdir('./boards'), default_value=personalize['board'], key='board')],
               [sg.Button(lang['save'], key="-MENU-")]]
 
-    window = sg.Window(lang['settings_window'], layout, finalize=True, size=(480,280), return_keyboard_events=True, icon=icon)
+    window = sg.Window(lang['settings_window'], layout, finalize=True, size=(480,120), return_keyboard_events=True, icon=icon)
 
     while(True):
         event, values = window.read()
@@ -95,7 +99,8 @@ def mainMenu(lang):
     sg.theme('Dark Blue')
     layout = [[sg.Text(lang['welcome'], font = 40)],
              [sg.Button(lang['start'], key="-PLAY-")],
-             [sg.Button(lang['settings'], key="-SETTINGS-"), sg.Button(lang['info'], key='-INFO-'), sg.Button(lang['exit'], key='-EXIT-')]]
+             [sg.Button(lang['settings'], key="-SETTINGS-"), sg.Button(lang['creator'], key='-CREATOR-'), sg.Button(lang['info'], key='-INFO-')],
+             [sg.Button(lang['exit'], key='-EXIT-')]]
 
     window = sg.Window(lang['menu_window'], layout, finalize=True, icon=icon,
                         element_justification='center', size=(480,200), return_keyboard_events=True)
