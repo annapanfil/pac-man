@@ -30,10 +30,10 @@ def game(personalize):
     clock = pg.time.Clock()
 
     board = Board(screen, pattern, pixel)
-    center = board.sizeInFields/2
+    center = int(board.sizeInFields/2)
 
-    player = Player(center, center)
-    enemies = [Enemy(1,1) for i in range(enemies_quantity)]
+    player = Player([center, center])
+    enemies = [Enemy([1,1]) for i in range(enemies_quantity)]
 
     # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)
@@ -60,7 +60,7 @@ def game(personalize):
                 # elif event.type == pg.KEYDOWN:
                 #     player.move(event)
             keys = pg.key.get_pressed()
-            player.move(keys)
+            player.move(keys, board.pattern, board.sizeInFields)
 
             # if not(paused):
             #     for e in enemies: e.move(event, board.sizeInFields, food, speed_increase)

@@ -15,7 +15,7 @@ class Board():
         self.surface = surface
         self.light_color = light_color
         self.dark_color = dark_color
-        self.pattern = pattern    #plik lub tablica
+        self.pattern = pattern    #tablica
 
     @property
     def sizeInFields(self):
@@ -42,28 +42,38 @@ class Board():
         self.pattern[y][x] = color
 
 class Character():
-    def __init__(self, x, y, color =  (175, 243, 98)):
-        self.x = x
-        self.y = y
+    def __init__(self, position: list, color =  (175, 243, 98)):
+        self.position = position
         self.color = color
 
-        # TODO: ugly, find `static` equivalent in python
-        self.directions = {"LEFT": (-1,0), "RIGHT": (1,0),"UP": (0,-1), "DOWN": (0,1)}
-
     def display(self, board: Board):
-        rectangle = pg.Rect((self.x*board.field_size, self.y*board.field_size), (board.field_size, board.field_size))
+        rectangle = pg.Rect((self.position[0]*board.field_size, self.position[1]*board.field_size), (board.field_size, board.field_size))
         pg.draw.rect(board.surface, (218, 247, 166), rectangle)
+
+    def valid_move(self, new_pos: list, pattern: list, board_size: int) -> tuple:
+
+        # hit the border
+        if new_pos[0] < 0: new_pos[0] = board_size
+        elif new_pos[0] == board_size: new_pos[0] = 0
+        elif new_pos[1] < 0: new_pos[1] = board_size
+        elif new_pos[1] == board_size: new_pos[1] = 0
+
+        # hit the wall
+        elif pattern[new_pos[1]][new_pos[0]] == 1:
+            return [-1,-1]
+
+        return new_pos
 
 class Player(Character):
     # player move, when key is pressed
-    def __init__(self, x, y, color =  (175, 243, 98)):
-        super().__init__(x,y,color)
+    def __init__(self, position: list, color =  (175, 243, 98), controls: tuple):
+        super().__init__(position, color)
         self.left_key = pg.K_LEFT #, pg.K_a}
         self.right_key = pg.K_RIGHT #, pg.K_d}
         self.up_key = pg.K_UP #, pg.K_w}
         self.down_key = pg.K_DOWN #, pg.K_s}
 
-    def move(self, key):
+    def move(self, key, pattern, size):
 
         direction = (0,0)
 
@@ -78,8 +88,12 @@ class Player(Character):
         elif key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
 
-        self.x += direction[0]
-        self.y += direction[1]
+        new_pos = [self.position[0]+direction[0], self.position[1]+direction[1]]
+
+        new_pos = self.valid_move(new_pos, pattern, size)
+        if new_pos != [-1,-1]:  # if cannot move, stay
+            self.position = new_pos
+
 
 class Enemy(Character):
     # enemies move automatically
@@ -91,18 +105,3 @@ class Enemy(Character):
 
     def move(self, event, board_size):
         pass
-        # TODO
-        # head = self.positions[0]
-        # new_head = [head[0] + self.direction[0], head[1] + self.direction[1]]
-        #
-        # # check if hiting the border
-        # elif not(0 <= new_head[0] < board_size and  0 <= new_head[1] < board_size):
-        #     if self.wall_die:
-        #         raise GameOver
-        #     else:
-        #         if new_head[0] < 0: new_head[0] = board_size
-        #         elif new_head[0] == board_size: new_head[0] = 0
-        #         elif new_head[1] < 0: new_head[1] = board_size
-        #         elif new_head[1] == board_size: new_head[1] = 0
-        #
-        # self.positions.insert(0, new_head)
