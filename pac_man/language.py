@@ -9,13 +9,14 @@ languages = {
     'welcome': '\nWelcome to Pac man game!\n',
     'start': 'Start game',
     'settings': 'Settings',
+    'creator': "board creator",
     'info': 'Info',
     'exit': "Exit",
 
     #SETTINGS
     'settings_window': 'Pac man – SETTINGS',
     'language': 'Language:\t',
-    'board_size': 'Board size:\t',
+    'board': 'Board:\t',
     'save': 'Save',
 
     #INFO
@@ -44,13 +45,14 @@ languages = {
     'welcome': '\nWitaj w grze Pac man!\n',
     'start': 'Rozpocznij grę',
     'settings': 'Ustawienia',
+    'creator': "Tworzenie plansz",
     'info': 'Informacje',
     'exit': "Wyjście",
 
     #USTAWIENIA
     'settings_window': 'Pac man – USTAWIENIA',
-    'language': 'Język:\t\t',
-    'board_size': 'Wielkość planszy:\t',
+    'language': 'Język:\t',
+    'board': 'Plansza:\t',
     'save': "Zapisz",
 
     #INFORMACJE

@@ -1,3 +1,4 @@
+from numpy import loadtxt
 import pygame as pg
 from .classes import *
 from .language import *
@@ -11,8 +12,10 @@ def display(board, player, enemies):
 
 def game(personalize):
     lang = languages[personalize['lang']]
+    pixel = 20
+    pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
 
-    screen_size = int(personalize['board_size'])
+    screen_size = len(pattern)*pixel
     enemies_quantity = 1;
 
     # INITIALIZE PYGAME AND CREATE THE WINDOW
@@ -26,7 +29,7 @@ def game(personalize):
 
     clock = pg.time.Clock()
 
-    board = Board(surface = screen)
+    board = Board(screen, pattern, pixel)
     center = board.sizeInFields/2
 
     player = Player(center, center)

@@ -1,6 +1,5 @@
 import pygame as pg
 import random
-from numpy import loadtxt
 
 class GameOver(Exception):
     def __init__(self, *args, **kwargs):
@@ -11,12 +10,12 @@ class GamePause(Exception):
         super(GamePause, self).__init__(*args, **kwargs)
 
 class Board():
-    def __init__(self, surface, pattern="boards/mysz", field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
+    def __init__(self, surface, pattern, field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
         self.field_size = field_size
         self.surface = surface
         self.light_color = light_color
         self.dark_color = dark_color
-        self.pattern = loadtxt(fname=pattern, delimiter=" ", skiprows=0, dtype=int) if type(pattern) == str else pattern    #plik lub tablica
+        self.pattern = pattern    #plik lub tablica
 
     @property
     def sizeInFields(self):
