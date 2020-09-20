@@ -79,8 +79,7 @@ def settings(personalize):
     layout = [[sg.Text(lang['language']), sg.OptionMenu(languages.keys(), default_value=personalize['lang'], key='lang')],
               [sg.Text(lang['board']), sg.OptionMenu(listdir('./boards'), default_value=personalize['board'], key='board')],
               [sg.Text(lang['controls_p1']), sg.OptionMenu(['adws', 'arrows'], default_value=personalize['controls_p1'], key='controls_p1')],
-              [sg.Text(lang['controls_p2']), sg.OptionMenu(['None', 'adws', 'arrows'], default_value=personalize['controls_p2'] if 'controls_p2' in personalize.keys() else 'None',
-              key='controls_p2')],
+              [sg.Checkbox(lang['p2'], default=personalize['p2'], key='p2')],
               [sg.Button(lang['save'], key="-MENU-")]]
 
     window = sg.Window(lang['settings_window'], layout, finalize=True, return_keyboard_events=True, icon=icon)
@@ -97,7 +96,6 @@ def settings(personalize):
 
         if event == "-MENU-":
             window.Close()
-            if values['controls_p2'] == 'None': values.pop('controls_p2')
             return(values)
 
 def mainMenu(lang):

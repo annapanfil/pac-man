@@ -18,7 +18,7 @@ languages = {
     'language': 'Language:\t',
     'board': 'Board:\t',
     'controls_p1' : "P1 controls :",
-    'controls_p2' : "P2 controls :",
+    'p2' : "P2",
     'save': 'Save',
 
     #INFO
@@ -56,7 +56,7 @@ languages = {
     'language': 'Język:\t',
     'board': 'Plansza:\t',
     'controls_p1' : "sterowanie Gracz 1:",
-    'controls_p2' : "sterowanie Gracz 2:",
+    'p2' : "Gracz 2",
     'save': "Zapisz",
 
     #INFORMACJE

@@ -34,9 +34,10 @@ def game(personalize):
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
     players = [Player([center, center], controls)]
-    if 'controls_p2' in personalize.keys():
-        controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p2'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
-        players.append(Player([center+2, center], controls))
+    if personalize['p2']:
+        controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
+        players.append(Player([center+1, center], controls))
+        players[0].position[0]-= 1
     enemies = [Enemy([1,1]) for i in range(enemies_quantity)]
 
     # display 3...2...1...
