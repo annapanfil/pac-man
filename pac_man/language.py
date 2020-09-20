@@ -17,6 +17,8 @@ languages = {
     'settings_window': 'Pac man – SETTINGS',
     'language': 'Language:\t',
     'board': 'Board:\t',
+    'controls_p1' : "P1 controls :",
+    'controls_p2' : "P2 controls :",
     'save': 'Save',
 
     #INFO
@@ -53,6 +55,8 @@ languages = {
     'settings_window': 'Pac man – USTAWIENIA',
     'language': 'Język:\t',
     'board': 'Plansza:\t',
+    'controls_p1' : "sterowanie Gracz 1:",
+    'controls_p2' : "sterowanie Gracz 2:",
     'save': "Zapisz",
 
     #INFORMACJE

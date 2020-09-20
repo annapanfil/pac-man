@@ -6,7 +6,7 @@ from .board_creator import board_main
 
 def main():
     # default settings
-    if 'personalize' not in locals(): personalize = {'lang': 'pl', 'board': listdir('./boards')[0]}
+    if 'personalize' not in locals(): personalize = {'lang': 'pl', 'board': listdir('./boards')[0], 'controls_p1': 'arrows'}
     lang = languages[personalize['lang']]
 
     choice = mainMenu(lang)

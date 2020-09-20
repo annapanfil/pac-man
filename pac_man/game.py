@@ -3,9 +3,9 @@ import pygame as pg
 from .classes import *
 from .language import *
 
-def display(board, player, enemies):
+def display(board, players, enemies):
     board.display()
-    player.display(board)
+    for p in players: p.display(board)
     for e in enemies: e.display(board)
 
     pg.display.update()
@@ -32,7 +32,11 @@ def game(personalize):
     board = Board(screen, pattern, pixel)
     center = int(board.sizeInFields/2)
 
-    player = Player([center, center])
+    controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
+    players = [Player([center, center], controls)]
+    if 'controls_p2' in personalize.keys():
+        controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p2'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
+        players.append(Player([center+2, center], controls))
     enemies = [Enemy([1,1]) for i in range(enemies_quantity)]
 
     # display 3...2...1...
@@ -57,10 +61,10 @@ def game(personalize):
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
-                # elif event.type == pg.KEYDOWN:
-                #     player.move(event)
+
             keys = pg.key.get_pressed()
-            player.move(keys, board.pattern, board.sizeInFields)
+            for player in players:
+                player.move(keys, board.pattern, board.sizeInFields)
 
             # if not(paused):
             #     for e in enemies: e.move(event, board.sizeInFields, food, speed_increase)
@@ -70,7 +74,7 @@ def game(personalize):
         except GamePause:
             paused = not(paused)
 
-        display(board, player, enemies)
+        display(board, players, enemies)
         # if show_score:
         #     text = font.render(lang['score'].format(score), True, (0,0,0))
         #     screen.blit(text, (10, 20))

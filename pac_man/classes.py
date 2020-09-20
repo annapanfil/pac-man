@@ -66,15 +66,14 @@ class Character():
 
 class Player(Character):
     # player move, when key is pressed
-    def __init__(self, position: list, color =  (175, 243, 98), controls: tuple):
+    def __init__(self, position: list, controls: tuple, color =  (175, 243, 98)):
         super().__init__(position, color)
-        self.left_key = pg.K_LEFT #, pg.K_a}
-        self.right_key = pg.K_RIGHT #, pg.K_d}
-        self.up_key = pg.K_UP #, pg.K_w}
-        self.down_key = pg.K_DOWN #, pg.K_s}
+        self.left_key = controls[0]
+        self.right_key = controls[1]
+        self.up_key = controls[2]
+        self.down_key = controls[3]    
 
     def move(self, key, pattern, size):
-
         direction = (0,0)
 
         if key[self.left_key]:
