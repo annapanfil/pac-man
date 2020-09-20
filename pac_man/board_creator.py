@@ -27,22 +27,38 @@ def board_menu() -> int:
 
 def board_draw(size):
     pg.init()
-    screen = pg.display.set_mode((size, size))
+    pixel = 20
+    screen = pg.display.set_mode((size+5*pixel, size))
     pg.display.set_caption("Board creator")
     clock = pg.time.Clock()
-    pixel = 20
     board = Board(surface = screen, field_size = pixel, pattern = zeros((int(size/pixel), int(size/pixel)), dtype=int))
+    dark_button = pg.Rect((size+2*pixel, int(size/2)-2*pixel), (pixel*2, pixel*2))
+    light_button = pg.Rect((size+2*pixel, int(size/2)), (pixel*2, pixel*2))
 
     running = True
+    color = 1
     while running:
-        clock.tick(10)
 
+        if pg.mouse.get_pressed()[0] == True:
+            pos = pg.mouse.get_pos()
+            if pos[0]<size:              # board
+                board.draw(pos, color)
+            elif pos[0] >= size+2*pixel and pos[0] <= size+4*pixel:            # buttons
+                if pos[1] >=  int(size/2)-2*pixel and pos[1] <= int(size/2):   # dark button
+                    color = 1
+                elif pos[1] >=  int(size/2) and pos[1] <= int(size/2)+2*pixel: # light button
+                    color = 0
+
+        clock.tick(1000)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
             elif event.type == pg.KEYDOWN and event.key == pg.K_s:
                 running = False
         board.display()
+        pg.draw.rect(screen, board.dark_color, dark_button)
+        pg.draw.rect(screen, board.light_color, light_button)
+
         pg.display.update()
 
     clock.tick(1)
