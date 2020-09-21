@@ -16,7 +16,7 @@ def game(personalize):
     pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
 
     screen_size = len(pattern)*pixel
-    enemies_quantity = 1;
+    enemies_quantity = 7;
 
     # INITIALIZE PYGAME AND CREATE THE WINDOW
     pg.init()
@@ -38,23 +38,24 @@ def game(personalize):
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls))
         players[0].position[0]-= 1
-    enemies = [Enemy([1,1]) for i in range(enemies_quantity)]
+    enemies = [Enemy([1,1+i], [p.position for p in players]) for i in range(enemies_quantity)]
 
-    # display 3...2...1...
+    # # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)
     #
     # for i in range(3,0,-1):
     #     text = font_big.render(f"{i}", True, (0,0,0))
-    #     display(board, player, enemies)
+    #     display(board, players, enemies)
     #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
     #     pg.display.update()
     #     clock.tick(1)
-
-    font = pg.font.SysFont(None, 30)
+    #
+    # font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
     running = True
     paused = False
+    enemies_round = 0
     while running:
         clock.tick(10)
         # EVENTS HANDLING
@@ -63,12 +64,15 @@ def game(personalize):
                 if event.type == pg.QUIT:
                     running = False
 
-            keys = pg.key.get_pressed()
-            for player in players:
-                player.move(keys, board.pattern, board.sizeInFields)
+            if not(paused):
+                keys = pg.key.get_pressed()
+                for player in players:
+                    player.move(keys, board.pattern, board.sizeInFields)
 
-            # if not(paused):
-            #     for e in enemies: e.move(event, board.sizeInFields, food, speed_increase)
+                if enemies_round == 0:
+                    for e in enemies: e.move(event, board.pattern, board.sizeInFields, [p.position for p in players])
+                    enemies_round = 1
+                else: enemies_round -= 1
 
         except GameOver:
             running = False
