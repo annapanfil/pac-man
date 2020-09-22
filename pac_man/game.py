@@ -16,7 +16,7 @@ def game(personalize):
     pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
 
     screen_size = len(pattern)*pixel
-    enemies_quantity = 1;
+    enemies_quantity = 4;
 
     # INITIALIZE PYGAME AND CREATE THE WINDOW
     pg.init()
@@ -38,7 +38,7 @@ def game(personalize):
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls))
         players[0].position[0]-= 1
-    enemies = [Enemy([center-1,2+i], [p.position for p in players]) for i in range(enemies_quantity)]
+    enemies = [Enemy([center,2*i], [p.position for p in players]) for i in range(enemies_quantity)]
 
     # # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)
@@ -71,7 +71,7 @@ def game(personalize):
 
                 if enemies_round == 0:
                     for e in enemies: e.move(board.pattern, board.sizeInFields, [p.position for p in players])
-                    enemies_round = 5
+                    enemies_round = 1
                 else: enemies_round -= 1
 
         except GameOver:

@@ -2,6 +2,18 @@ import pygame as pg
 import random
 import pdb
 
+# TODO: jedzenie
+# TODO: obrazki
+
+# TODO: oddziaływanie obiekt-obiekt
+## przeciwnik-przeciwnik
+## gracz-przeciwnik
+## gracz-gracz
+## gracz-jedzenie
+
+# QUESTION: czy przeciwnik ma używać teleportu?
+
+
 class GameOver(Exception):
     def __init__(self, *args, **kwargs):
         super(GameOver, self).__init__(*args, **kwargs)
@@ -55,7 +67,6 @@ class Character():
         new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
 
         # hit the border – teleport
-        # note: enemies can teleport, they just dont want to
         if new_pos[0] < 0: new_pos[0] = board_size
         elif new_pos[0] == board_size: new_pos[0] = 0
         elif new_pos[1] < 0: new_pos[1] = board_size
@@ -127,7 +138,6 @@ class Enemy(Character):
 
         return new_pos
 
-
     def plusMinus1(self, turn, index, pattern, board_size):
         # try +-1 on position index
         for val in {-1, 1}:
@@ -142,16 +152,15 @@ class Enemy(Character):
         for i in range(2):
             temp_turn = turn.copy()
             temp_turn[i] *= val
-            # print("check", temp_turn)
             new_pos = self.valid_move(temp_turn, pattern, board_size)
             if new_pos != False:
-                # print("ok, go", temp_turn)
                 return (new_pos,  temp_turn)
 
-        # print("nope, wall", temp_turn)
         return False
 
     def move(self, pattern, board_size, players_pos):
+        # TODO: zdarza mu się chodzić w kółko
+
         turn = self.turn(players_pos)
         new_pos = self.valid_move(turn, pattern, board_size)
 
@@ -177,14 +186,6 @@ class Enemy(Character):
                             turn = temp[1]
                             break
                         turn[not(index)] += iterator
-
-                    # if new_pos == False:
-                    #     turn[index] = 0     # give up – opposite direction
-                    #     # E
-                    #     new_pos = self.valid_move(turn, pattern, board_size)
-                    #
-                    #     if new_pos == False:         # trapped
-                    #         new_pos = self.prev_position
 
                 else:                        # diagonally
                     # assume  NW
