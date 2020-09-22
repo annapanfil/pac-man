@@ -51,7 +51,8 @@ class Character():
         rectangle = pg.Rect((self.position[0]*board.field_size, self.position[1]*board.field_size), (board.field_size, board.field_size))
         pg.draw.rect(board.surface, self.color, rectangle)
 
-    def valid_move(self, new_pos: list, pattern: list, board_size: int) -> tuple:
+    def valid_move(self, turn: list, pattern: list, board_size: int) -> tuple:
+        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
 
         # hit the border – teleport
         # note: enemies can teleport, they just dont want to
@@ -91,9 +92,7 @@ class Player(Character):
         if key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
 
-        new_pos = [self.position[0]+direction[0], self.position[1]+direction[1]]
-
-        new_pos = self.valid_move(new_pos, pattern, size)
+        new_pos = self.valid_move(direction, pattern, size)
         if new_pos != False:  # if cannot move, stay
             self.position = new_pos
 
@@ -124,20 +123,30 @@ class Enemy(Character):
         # try +-1 on position index
         for val in {-1, 1}:
             turn[index] = val
-            new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-            if self.valid_move(new_pos, pattern, board_size) != False:
+            new_pos = self.valid_move(turn, pattern, board_size)
+            if new_pos != False:
                 return new_pos
 
         return False
 
+    def checkValue(self, turn, val, pattern, board_size):
+        for i in range(2):
+            temp_turn = turn.copy()
+            temp_turn[i] *= val
+            # print("check", temp_turn)
+            new_pos = self.valid_move(temp_turn, pattern, board_size)
+            if new_pos != False:
+                # print("ok, go", temp_turn)
+                return new_pos
+
+        # print("nope, wall", temp_turn)
+        return False
 
     def move(self, pattern, board_size, players_pos):
         turn = self.turn(players_pos)
-        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-        new_pos = self.valid_move(new_pos, pattern, board_size)
+        new_pos = self.valid_move(turn, pattern, board_size)
 
-        while new_pos == False:  # if cannot move, choose other place
-            print("wall", turn)
+        if new_pos == False:  # if cannot move, choose other place
 
             if turn[0]*turn[1]==0:              # N, S, E or W
                 # assume W
@@ -156,52 +165,37 @@ class Enemy(Character):
                 if new_pos == False:
                     turn[index] = 0     # give up – opposite direction
                     # E
-                    new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-                    if self.valid_move(new_pos, pattern, board_size) == False:    # trapped
+                    new_pos = self.valid_move(turn, pattern, board_size)
+
+                    if new_pos == False:    # trapped
                         print("Enemy can't move!")
                         new_pos = self.position
 
             else:                               # diagonally
                 # assume  NW
-                # pdb.set_trace()
                 for val in [0,-1]:
-                    if new_pos == False:
-                        # try N and W
-                        # if not, try NE and SW
-                        for i in range(2):
-                            temp_turn = turn.copy()
-                            temp_turn[i] *= val
-                            temp_pos = [self.position[0] + temp_turn[0], self.position[1] + temp_turn[1]]
-                            print("check", temp_turn)
-                            if self.valid_move(temp_pos, pattern, board_size) != False:
-                                print("ok, move", temp_turn)
-                                new_pos = temp_pos
-                                break
-                            else: print("wall 2")
+                    # try N and W
+                    # if not, try NE and SW
+                    temp_pos = self.checkValue(turn, val, pattern, board_size)
+
+                    if temp_pos != False:
+                        new_pos = temp_pos
+                        break
 
                 if new_pos == False:
                     # if not, try E and S
-                    for i in range(2):
-                        temp_turn = [turn [0] * -1, turn [1] * -1]
-                        temp_turn[i] *= 0
-                        print("check", temp_turn)
-                        temp_pos = [self.position[0] + temp_turn[0], self.position[1] + temp_turn[1]]
-                        if self.valid_move(temp_pos, pattern, board_size) != False:
-                            print("ok, move", temp_turn)
-                            new_pos = temp_pos
-                            break
-                        else: print("wall 3")
+                    self.checkValue([-x for x in turn], 0, pattern, board_size)
+                    if temp_pos != False:
+                        new_pos = temp_pos
 
-                    if new_pos == False:     # give up - opposite direction
+                    else:         # opposite direction
                         # SE
-                        turn [0] *= -1
-                        turn [1] *= -1
-                        print("check", turn)
-                        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-                        if self.valid_move(new_pos, pattern, board_size) == False:    # trapped
+                        turn = [-x for x in turn]
+                        new_pos = self.valid_move(turn, pattern, board_size)
+
+                        if new_pos == False:    # trapped
                             print("Enemy can't move!")
                             new_pos = self.position
-                        else: print("ok, move", turn)
 
 
         self.position = new_pos
