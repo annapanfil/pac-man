@@ -137,6 +137,7 @@ class Enemy(Character):
         new_pos = self.valid_move(new_pos, pattern, board_size)
 
         while new_pos == False:  # if cannot move, choose other place
+            print("wall", turn)
 
             if turn[0]*turn[1]==0:              # N, S, E or W
                 # assume W
@@ -160,16 +161,47 @@ class Enemy(Character):
                         print("Enemy can't move!")
                         new_pos = self.position
 
-            else: # diagonally
+            else:                               # diagonally
                 # assume  NW
-                # try N and W
-                # if not, try NE and SW
-                # if not, try E and S
+                # pdb.set_trace()
+                for val in [0,-1]:
+                    if new_pos == False:
+                        # try N and W
+                        # if not, try NE and SW
+                        for i in range(2):
+                            temp_turn = turn.copy()
+                            temp_turn[i] *= val
+                            temp_pos = [self.position[0] + temp_turn[0], self.position[1] + temp_turn[1]]
+                            print("check", temp_turn)
+                            if self.valid_move(temp_pos, pattern, board_size) != False:
+                                print("ok, move", temp_turn)
+                                new_pos = temp_pos
+                                break
+                            else: print("wall 2")
 
+                if new_pos == False:
+                    # if not, try E and S
+                    for i in range(2):
+                        temp_turn = [turn [0] * -1, turn [1] * -1]
+                        temp_turn[i] *= 0
+                        print("check", temp_turn)
+                        temp_pos = [self.position[0] + temp_turn[0], self.position[1] + temp_turn[1]]
+                        if self.valid_move(temp_pos, pattern, board_size) != False:
+                            print("ok, move", temp_turn)
+                            new_pos = temp_pos
+                            break
+                        else: print("wall 3")
 
-                # give up - opposite direction
-                # SE
-                new_pos = self.position
+                    if new_pos == False:     # give up - opposite direction
+                        # SE
+                        turn [0] *= -1
+                        turn [1] *= -1
+                        print("check", turn)
+                        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
+                        if self.valid_move(new_pos, pattern, board_size) == False:    # trapped
+                            print("Enemy can't move!")
+                            new_pos = self.position
+                        else: print("ok, move", turn)
 
 
         self.position = new_pos

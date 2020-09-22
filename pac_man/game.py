@@ -33,7 +33,7 @@ def game(personalize):
     center = int(board.sizeInFields/2)
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
-    players = [Player([center-1, 20], controls)]
+    players = [Player([center-3, 20], controls)]
     if personalize['p2']:
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls))
@@ -45,10 +45,10 @@ def game(personalize):
     #
     # for i in range(3,0,-1):
     #     text = font_big.render(f"{i}", True, (0,0,0))
-    #     display(board, players, enemies)
+        # display(board, players, enemies)
     #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
-    #     pg.display.update()
-    #     clock.tick(1)
+        # pg.display.update()
+        # clock.tick(1)
     #
     # font = pg.font.SysFont(None, 30)
 
@@ -71,7 +71,7 @@ def game(personalize):
 
                 if enemies_round == 0:
                     for e in enemies: e.move(board.pattern, board.sizeInFields, [p.position for p in players])
-                    enemies_round = 3
+                    enemies_round = 5
                 else: enemies_round -= 1
 
         except GameOver:
