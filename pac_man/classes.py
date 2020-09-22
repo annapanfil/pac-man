@@ -62,7 +62,9 @@ class Character():
 
         # hit the wall
         elif pattern[new_pos[1]][new_pos[0]] == 1:
-            return [-100,-100]
+            return False
+
+        ## TODO: sprawdzić czy nie stąd przyszedł – dla przeciwnika
 
         return new_pos
 
@@ -76,52 +78,98 @@ class Player(Character):
         self.down_key = controls[3]
 
     def move(self, key, pattern, size):
-        direction = (0,0)
+        direction = [0,0]
 
         if key[self.left_key]:
-            direction = (-1,0)
-        elif key[self.right_key]:
-            direction = (1,0)
-        elif key[self.up_key]:
-            direction = (0,-1)
-        elif key[self.down_key]:
-            direction = (0,1)
-        elif key[pg.K_p] or key[pg.K_SPACE]:
+            direction[0] -= 1
+        if key[self.right_key]:
+            direction[0] += 1
+        if key[self.up_key]:
+            direction[1] -= 1
+        if key[self.down_key]:
+            direction[1] += 1
+        if key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
 
         new_pos = [self.position[0]+direction[0], self.position[1]+direction[1]]
 
         new_pos = self.valid_move(new_pos, pattern, size)
-        if new_pos != [-100,-100]:  # if cannot move, stay
+        if new_pos != False:  # if cannot move, stay
             self.position = new_pos
 
 
 class Enemy(Character):
     def turn(self, players_pos):
-        player = players_pos[0] # TODO: choose nearest player
+        player = players_pos[0]
+        for p in players_pos[1:]:
+            if p[0]**2+p[1]**2 < player[0]**2+player[1]**2:
+                player = p
+
         turn=[0,0]
 
         # go to the player
         for i in range(2):
             x = self.position[i] - player[i]
-            if x<0: turn[i]= 1
-            elif x>0:
-                turn[i]= -1
+            if x<0: turn[i] = 1
+            elif x>0: turn[i]= -1
 
-        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-
-        return new_pos
+        return turn
 
     # enemies move automatically
     def __init__(self, position, players_pos, color = (243, 98, 102)):
         super().__init__(position, color)
         self.direction = self.turn(players_pos)
 
+    def plusMinus1(self, turn, index, pattern, board_size):
+        # try +-1 on position index
+        for val in {-1, 1}:
+            turn[index] = val
+            new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
+            if self.valid_move(new_pos, pattern, board_size) != False:
+                return new_pos
 
-    def move(self, event, pattern, board_size, players_pos):
-        new_pos = self.turn(players_pos)
+        return False
+
+
+    def move(self, pattern, board_size, players_pos):
+        turn = self.turn(players_pos)
+        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
         new_pos = self.valid_move(new_pos, pattern, board_size)
-        # pdb.set_trace()
-        if new_pos != [-100,-100]:  # if cannot move, stay # TODO: choose other place
-            self.position = new_pos
-        else: print("invalid move")
+
+        while new_pos == False:  # if cannot move, choose other place
+
+            if turn[0]*turn[1]==0:              # N, S, E or W
+                # assume W
+                index = 0 if turn[0] == 0 else 1
+                iterator = -1 * turn[not(index)]
+                for _ in range(2):     # try diagonally and everything but opposite
+                    # first, try NW and SW
+                    # if not, try N and S
+                    # if not, try NE and SE
+                    temp_pos = self.plusMinus1(turn, index, pattern, board_size)
+                    if temp_pos != False:
+                        new_pos = temp_pos
+                        break
+                    turn[not(index)] += iterator
+
+                if new_pos == False:
+                    turn[index] = 0     # give up – opposite direction
+                    # E
+                    new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
+                    if self.valid_move(new_pos, pattern, board_size) == False:    # trapped
+                        print("Enemy can't move!")
+                        new_pos = self.position
+
+            else: # diagonally
+                # assume  NW
+                # try N and W
+                # if not, try NE and SW
+                # if not, try E and S
+
+
+                # give up - opposite direction
+                # SE
+                new_pos = self.position
+
+
+        self.position = new_pos
