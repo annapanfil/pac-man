@@ -38,18 +38,18 @@ def game(personalize):
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls))
         players[0].position[0]-= 1
-    enemies = [Enemy([center,2*i], [p.position for p in players]) for i in range(enemies_quantity)]
+    enemies = [Enemy([center-1,2*i], [p.position for p in players]) for i in range(enemies_quantity)]
 
     # # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)
-    #
+    # #
     # for i in range(3,0,-1):
-    #     text = font_big.render(f"{i}", True, (0,0,0))
-        # display(board, players, enemies)
-    #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
-        # pg.display.update()
-        # clock.tick(1)
-    #
+    # #     text = font_big.render(f"{i}", True, (0,0,0))
+    #     display(board, players, enemies)
+    # #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
+    #     pg.display.update()
+    #     clock.tick(1)
+    # #
     # font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
@@ -66,13 +66,16 @@ def game(personalize):
 
             if not(paused):
                 keys = pg.key.get_pressed()
-                for player in players:
-                    player.move(keys, board.pattern, board.sizeInFields)
 
                 if enemies_round == 0:
-                    for e in enemies: e.move(board.pattern, board.sizeInFields, [p.position for p in players])
+                    for e in enemies: e.move(board.pattern, board.sizeInFields, [p.position for p in players], [e.position for e in enemies])
                     enemies_round = 1
                 else: enemies_round -= 1
+
+                for player in players:
+                    player.move(keys, board.pattern, board.sizeInFields)
+                    player.check_kill([e.position for e in enemies])
+
 
         except GameOver:
             running = False
