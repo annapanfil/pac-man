@@ -46,6 +46,7 @@ def game(personalize):
         players.append(Player([center+1, center], controls))
         players[0].position[0]-= 1
 
+
     enemies = [Enemy([center-1,2*i], [p.position for p in players]) for i in range(enemies_quantity)]
 
     # # display 3...2...1...
@@ -84,13 +85,13 @@ def game(personalize):
                     food = player.move(keys, board.pattern, board.sizeInFields, food)
                     player.check_kill([e.position for e in enemies])
 
-
         except GameOver:
             running = False
         except GamePause:
             paused = not(paused)
 
         display(board, players, enemies, food)
+
         # if show_score:
         #     text = font.render(lang['score'].format(score), True, (0,0,0))
         #     screen.blit(text, (10, 20))
@@ -105,6 +106,7 @@ def game(personalize):
     pg.quit()
 
     return [p.score for p in players]
+
 
 if __name__ == '__main__':
     main()

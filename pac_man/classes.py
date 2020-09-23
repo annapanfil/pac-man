@@ -79,6 +79,7 @@ class Character():
             if self.position == e:
                 raise GameOver
 
+
 class Player(Character):
     # player move, when key is pressed
     def __init__(self, position: list, controls: tuple, color = (218, 247, 16)):
@@ -90,6 +91,7 @@ class Player(Character):
         self.score = 0
 
     def move(self, key, pattern, board_size, food):
+
         direction = [0,0]
 
         if key[self.left_key]:
@@ -115,6 +117,7 @@ class Player(Character):
 
         return food
 
+
 class Enemy(Character):
     # enemies move automatically
     def __init__(self, position, players_pos, color = (243, 98, 102)):
@@ -138,12 +141,14 @@ class Enemy(Character):
 
         return turn
 
+
     def valid_move(self, turn: list, pattern: list, board_size: int, enemies_pos:list) -> tuple:
         new_pos = Character.valid_move(self, turn, pattern, board_size)
 
         # check if not going back
         if new_pos == self.prev_position:
             return False
+
 
         # check if not on other enemy:
         for e in enemies_pos:
@@ -157,20 +162,24 @@ class Enemy(Character):
         for val in {-1, 1}:
             turn[index] = val
             new_pos = self.valid_move(turn, pattern, board_size, enemies_pos)
+            
             if new_pos != False:
                 return (new_pos, turn)
 
         return False
+
 
     def checkValue(self, turn, val, pattern, board_size, enemies_pos):
         for i in range(2):
             temp_turn = turn.copy()
             temp_turn[i] *= val
             new_pos = self.valid_move(temp_turn, pattern, board_size,enemies_pos)
+
             if new_pos != False:
                 return (new_pos,  temp_turn)
 
         return False
+
 
     def move(self, pattern, board_size, players_pos, enemies_pos):
         # TODO: zdarza mu się chodzić w kółko
@@ -181,6 +190,7 @@ class Enemy(Character):
         if new_pos == False:  # if cannot move, choose other place
             # continue movement
             new_pos = self.valid_move(self.prev_turn, pattern, board_size, enemies_pos)
+
             if new_pos != False:
                 turn = self.prev_turn
 
@@ -194,6 +204,7 @@ class Enemy(Character):
                         # first, try NW and SW
                         # if not, try N and S
                         # if not, try NE and SE
+
                         temp = self.plusMinus1(turn, index, pattern, board_size, enemies_pos)
                         if temp != False:
                             new_pos = temp[0]
@@ -206,6 +217,7 @@ class Enemy(Character):
                     for val in [0,-1]:
                         # try N and W
                         # if not, try NE and SW
+
                         temp = self.checkValue(turn, val, pattern, board_size, enemies_pos)
 
                         if temp != False:
@@ -215,6 +227,7 @@ class Enemy(Character):
 
                     if new_pos == False:
                         # if not, try E and S
+
                         temp = self.checkValue([-x for x in turn], 0, pattern, board_size, enemies_pos)
                         if temp != False:
                             new_pos = temp[0]
