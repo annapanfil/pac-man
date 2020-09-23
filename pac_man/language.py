@@ -33,7 +33,7 @@ languages = {
     #EXIT
     'exit_window': "Pac man – GAME OVER",
     'game_over': "\nGAME OVER",
-    'your_score': 'Your score: {}',
+    'your_score': "{}. player's score: {}",
     'play_again': "Play again"
     },
 
@@ -71,7 +71,7 @@ languages = {
     #KONIEC GRY
     'exit_window': "Pac man – KONIEC GRY",
     'game_over': "\nKONIEC GRY",
-    'your_score': 'Twój wynik: {}',
+    'your_score': 'Wynik {}. gracza: {}',
     'play_again': "Zagraj ponownie"
     }
 }

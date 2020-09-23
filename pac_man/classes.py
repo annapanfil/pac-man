@@ -2,12 +2,10 @@ import pygame as pg
 import random
 import pdb
 
-# TODO: jedzenie
 # TODO: obrazki
 
 # TODO: oddziaływanie obiekt-obiekt
 ## gracz-gracz
-## gracz-jedzenie
 
 # QUESTION: czy przeciwnik ma używać teleportu?
 
@@ -89,8 +87,9 @@ class Player(Character):
         self.right_key = controls[1]
         self.up_key = controls[2]
         self.down_key = controls[3]
+        self.score = 0
 
-    def move(self, key, pattern, size):
+    def move(self, key, pattern, board_size, food):
         direction = [0,0]
 
         if key[self.left_key]:
@@ -104,9 +103,17 @@ class Player(Character):
         if key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
 
-        new_pos = self.valid_move(direction, pattern, size)
+        new_pos = self.valid_move(direction, pattern, board_size)
         if new_pos != False:  # if cannot move, stay
             self.position = new_pos
+
+            for i in range(len(food)):
+                if tuple(new_pos) == food[i].position:
+                    food[i].eat(self, board_size)
+                    food.pop(i)
+                    break
+
+        return food
 
 class Enemy(Character):
     # enemies move automatically
@@ -225,3 +232,16 @@ class Enemy(Character):
         self.prev_turn = turn
         self.prev_position = self.position
         self.position = new_pos
+
+class Food():
+    def __init__(self, position: tuple):
+        self.position = position
+        self.color = (243, 166, 98)
+
+    def display(self, board):
+        rectangle = pg.Rect((self.position[0]*board.field_size, self.position[1]*board.field_size), (board.field_size, board.field_size))
+        pg.draw.rect(board.surface, self.color, rectangle)
+
+    def eat(self, player, board_size):
+        player.score += 1
+        del(self)
