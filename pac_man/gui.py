@@ -62,7 +62,7 @@ def exitMenu(score, personalize):
     lang = languages[personalize['lang']]
 
     layout = [[sg.Text(lang['game_over'], font = 40, justification = 'center')],
-              [sg.Text(lang['your_score'].format(score)+'\n', font = 30, justification = 'center')],
+              [sg.Text(lang['your_score'].format(i+1, score[i])+'\n', font = 30, justification = 'center') for i in range(len(score))],
               [sg.Button(lang['play_again'], key="-PLAY-")],
               [sg.Button(lang['settings'], key="-SETTINGS-"), sg.Button(lang['creator'], key='-CREATOR-'), sg.Button(lang['info'], key='-INFO-')],
               [sg.Button(lang['exit'], key='-EXIT-')]]
