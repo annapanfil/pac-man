@@ -38,6 +38,7 @@ def game(personalize):
         for j in range(board.sizeInFields):
             if pattern[j][i] == 0:
                 food.append(Food((i, j)))
+                
     food_quantity = len(food)
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
@@ -48,6 +49,7 @@ def game(personalize):
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls), image=image)
         players[0].position[0]-= 1
+
 
     image = pg.image.load('graphics/enemy.png')
     image = pg.transform.scale(image, (pixel, pixel))
@@ -63,6 +65,7 @@ def game(personalize):
     #     pg.display.update()
     #     clock.tick(1)
     # #
+
     font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
@@ -110,7 +113,7 @@ def game(personalize):
     pg.quit()
 
     return [f'{(p.score/food_quantity*100):.0f}' for p in players]
-
+  
 
 if __name__ == '__main__':
     main()

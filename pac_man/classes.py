@@ -2,6 +2,7 @@ import pygame as pg
 import random
 import pdb
 
+
 # TODO: różne obrazki dla różnych graczy
 
 # TODO: oddziaływanie gracz-gracz
@@ -97,6 +98,7 @@ class Player(Character):
 
     def move(self, key, pattern, board_size, food):
         image = None
+
         direction = [0,0]
 
         if key[self.right_key]:
@@ -119,6 +121,7 @@ class Player(Character):
 
         if key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
+
 
         if image != None: self.image = image
         new_pos = self.valid_move(direction, pattern, board_size)
