@@ -17,7 +17,7 @@ def game(personalize):
     pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
 
     screen_size = len(pattern)*pixel
-    enemies_quantity = 4;
+    enemies_quantity = 0;
 
     # INITIALIZE PYGAME AND CREATE THE WINDOW
     pg.init()
@@ -38,16 +38,20 @@ def game(personalize):
         for j in range(board.sizeInFields):
             if pattern[j][i] == 0:
                 food.append(Food((i, j)))
+    food_quantity = len(food)
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
-    players = [Player([center-3, 20], controls)]
+    image = pg.image.load('graphics/player.png')
+    image = pg.transform.scale(image, (pixel, pixel))
+    players = [Player([center-3, 20], controls, image = image)]
     if personalize['p2']:
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
-        players.append(Player([center+1, center], controls))
+        players.append(Player([center+1, center], controls), image=image)
         players[0].position[0]-= 1
 
-
-    enemies = [Enemy([center-1,2*i], [p.position for p in players]) for i in range(enemies_quantity)]
+    image = pg.image.load('graphics/enemy.png')
+    image = pg.transform.scale(image, (pixel, pixel))
+    enemies = [Enemy([center-1,2*i], [p.position for p in players], image=image) for i in range(enemies_quantity)]
 
     # # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)
@@ -59,7 +63,7 @@ def game(personalize):
     #     pg.display.update()
     #     clock.tick(1)
     # #
-    # font = pg.font.SysFont(None, 30)
+    font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
     running = True
@@ -105,7 +109,7 @@ def game(personalize):
     clock.tick(1)
     pg.quit()
 
-    return [p.score for p in players]
+    return [f'{(p.score/food_quantity*100):.0f}' for p in players]
 
 
 if __name__ == '__main__':
