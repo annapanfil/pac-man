@@ -1,3 +1,7 @@
+"""
+translations
+"""
+
 languages = {
   'en':{
     #GAME
@@ -34,7 +38,12 @@ languages = {
     'exit_window': "Pac man – GAME OVER",
     'game_over': "\nGAME OVER",
     'your_score': "{}. player's score: {}%",
-    'play_again': "Play again"
+    'play_again': "Play again",
+
+    #BOARD CREATOR
+    's': "press S\nto save",
+    'player_pos': "Choose 2 players'\nstart positions",
+    'enemies_pos': "Choose 4 eniemies'\nstart positions"
     },
 
 'pl':{
@@ -72,6 +81,11 @@ languages = {
     'exit_window': "Pac man – KONIEC GRY",
     'game_over': "\nKONIEC GRY",
     'your_score': 'Wynik {}. gracza: {}%',
-    'play_again': "Zagraj ponownie"
+    'play_again': "Zagraj ponownie",
+
+    #TWORZENIE PLANSZ
+    's': "naciśnij S,\nby zapisać",
+    'player_pos': "Wybierz 2 pozycje\nstartowe graczy",
+    'enemies_pos': "Wybierz 4 pozycje\nstartowe wrogów"
     }
 }

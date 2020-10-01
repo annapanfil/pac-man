@@ -1,3 +1,7 @@
+"""
+show main menu, control aplication
+"""
+
 from os import listdir
 from .gui import *
 from .game import *
@@ -22,7 +26,7 @@ def main():
             choice = mainMenu(lang)
 
         elif choice == 'creator':
-            board_main()
+            board_main(lang)
             choice = mainMenu(lang)
 
         elif choice == 'info':
@@ -32,4 +36,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

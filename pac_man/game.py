@@ -1,9 +1,13 @@
+"""
+create game window, control game logic
+"""
+
 from numpy import loadtxt
 import pygame as pg
 from .classes import *
 from .language import *
 
-def display(board, players, enemies, food):
+def display(board: Board, players: list, enemies: list, food:list) -> None:
     board.display()
     for f in food: f.display(board)
     for p in players: p.display(board)
@@ -11,15 +15,15 @@ def display(board, players, enemies, food):
 
     pg.display.update()
 
-def game(personalize):
+def game(personalize: dict) -> list:
+    # INITIALIZE
     lang = languages[personalize['lang']]
     pixel = 20
     pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
 
     screen_size = len(pattern)*pixel
-    enemies_quantity = 0;
+    enemies_quantity = 1;
 
-    # INITIALIZE PYGAME AND CREATE THE WINDOW
     pg.init()
     screen = pg.display.set_mode((screen_size, screen_size))
     # os.environ['SDL_VIDEO_WINDOW_POS'] = '1000,1000' # sets window position – DOESN'T WORK
@@ -38,7 +42,6 @@ def game(personalize):
         for j in range(board.sizeInFields):
             if pattern[j][i] == 0:
                 food.append(Food((i, j)))
-                
     food_quantity = len(food)
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
@@ -49,7 +52,6 @@ def game(personalize):
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player([center+1, center], controls), image=image)
         players[0].position[0]-= 1
-
 
     image = pg.image.load('graphics/enemy.png')
     image = pg.transform.scale(image, (pixel, pixel))
@@ -65,7 +67,6 @@ def game(personalize):
     #     pg.display.update()
     #     clock.tick(1)
     # #
-
     font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
@@ -99,12 +100,12 @@ def game(personalize):
 
         display(board, players, enemies, food)
 
-        # if show_score:
+        # show_score:
         #     text = font.render(lang['score'].format(score), True, (0,0,0))
         #     screen.blit(text, (10, 20))
         #     pg.display.update()
 
-        if paused:
+        if paused:  # TODO: unpause
             text = font.render(lang['pause'], True, (0,0,0))
             screen.blit(text, (screen_size-100, 20))
             pg.display.update()
@@ -112,8 +113,8 @@ def game(personalize):
     clock.tick(1)
     pg.quit()
 
-    return [f'{(p.score/food_quantity*100):.0f}' for p in players]
-  
+    return [f'{(p.score/food_quantity*100):.2f}' for p in players]
+
 
 if __name__ == '__main__':
     main()

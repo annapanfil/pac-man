@@ -1,4 +1,6 @@
-"""allow user to draw new board and save it to text file"""
+"""
+allow user to draw new board and save it to text file
+"""
 
 import pygame as pg
 import PySimpleGUI as sg
@@ -7,7 +9,7 @@ from .classes import Board
 from .language import *
 
 def set_start_pos(board: Board, screen, clock) -> set:
-    # create set of start positions (from user input)
+    ### create set of start positions (from user input) ###
     characters_pos = set()
     pixel = board.field_size
     while len(characters_pos) < 2:
@@ -36,7 +38,7 @@ def set_start_pos(board: Board, screen, clock) -> set:
 
 
 def board_menu() -> int:
-    # show menu (choose board size)
+    ### show menu (choose board size) ###
     layout = [[sg.Text("Board size"), sg.Slider(range=(120, 1000), default_value=480,
                 resolution = 40, orientation='horizontal', key="board_size")],
               [sg.Button("OK", key="-OK-")]]
@@ -59,7 +61,7 @@ def board_menu() -> int:
 
 
 def board_draw(size: int, lang: dict) -> (list, set):
-    # allow user to draw the board and set positions of characters
+    ### allow user to draw the board and set positions of characters ###
     pg.init()
     pixel = 20
     screen = pg.display.set_mode((size+10*pixel, size))
@@ -121,7 +123,7 @@ def board_draw(size: int, lang: dict) -> (list, set):
 
 
 def board_save(tab: list, players_pos: set) -> int:
-    # save board to file, ask user for filename
+    ### save board to file, ask user for filename ###
     layout = [[sg.Text("Board name: "), sg.InputText(default_text="my_board", key="filename")],
               [sg.Button("Save", key="-OK-"), sg.Button("Cancel", key="-CANCEL-")]]
 

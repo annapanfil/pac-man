@@ -1,10 +1,14 @@
+"""
+windows
+"""
+
 import PySimpleGUI as sg
 from os import listdir
 from .language import *
 
 icon = "snake/snake.png"
 
-def eventHandling(window):
+def eventHandling(window) -> str:
     QT_ENTER_KEY1 = 'special 16777220'
     QT_ENTER_KEY2 = 'special 16777221'
 
@@ -34,7 +38,8 @@ def eventHandling(window):
             window.Close()
             return 'info'
 
-def info(lang):
+def info(lang: dict) -> None:
+    ### info window ###
     layout = [[sg.Text(lang['h1_controls'], font = 40, justification = 'center')],
               [sg.Text(lang['controls'])],
               [sg.Text(lang['h1_rules'], font = 40, justification = 'center')],
@@ -58,7 +63,8 @@ def info(lang):
             window.Close()
             break
 
-def exitMenu(score, personalize):
+def exitMenu(score: [int, int], personalize: dict) -> str:
+    ### exit menu window – after game ###
     lang = languages[personalize['lang']]
 
     layout = [[sg.Text(lang['game_over'], font = 40, justification = 'center')],
@@ -72,7 +78,8 @@ def exitMenu(score, personalize):
 
     return eventHandling(window)
 
-def settings(personalize):
+def settings(personalize:dict) -> dict:
+    ### settings window ###
     lang = languages[personalize['lang']]
 
 
@@ -98,7 +105,8 @@ def settings(personalize):
             window.Close()
             return(values)
 
-def mainMenu(lang):
+def mainMenu(lang: dict) -> str:
+    ### main menu window – start game ###
     sg.theme('Dark Blue')
     layout = [[sg.Text(lang['welcome'], font = 40)],
              [sg.Button(lang['start'], key="-PLAY-")],

@@ -1,7 +1,10 @@
+"""
+player, enemy, board and food classes (including methods for displaying, movement and )
+"""
+
 import pygame as pg
 import random
 import pdb
-
 
 # TODO: różne obrazki dla różnych graczy
 
@@ -20,11 +23,11 @@ class GamePause(Exception):
 
 class Board():
     def __init__(self, screen, pattern, field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
-        self.field_size = field_size
-        self.screen = screen
+        self.field_size = field_size     # pixel
+        self.screen = screen             # pygame surface
         self.light_color = light_color
         self.dark_color = dark_color
-        self.pattern = pattern    #tablica
+        self.pattern = pattern           # numpy array
 
     @property
     def sizeInFields(self):
@@ -45,6 +48,7 @@ class Board():
                     pg.draw.rect(self.screen, self.light_color, rectangle)
 
     def draw(self, position: tuple, color = 1):
+        ### change board pattern ###
         x = int(position[0]/self.field_size)
         y = int(position[1]/self.field_size)
         # print(position, x, y)
@@ -66,6 +70,7 @@ class Character():
             pg.draw.rect(board.screen, self.color, rectangle)
 
     def valid_move(self, turn: list, pattern: list, board_size: int) -> tuple:
+        ### check if move is valid ###
         new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
 
         # hit the border – teleport
@@ -85,9 +90,7 @@ class Character():
             if self.position == e:
                 raise GameOver
 
-
 class Player(Character):
-    # player move, when key is pressed
     def __init__(self, position: list, controls: tuple, color = (218, 247, 16), image = None):
         super().__init__(position, color, image)
         self.left_key = controls[0]
@@ -97,8 +100,8 @@ class Player(Character):
         self.score = 0
 
     def move(self, key, pattern, board_size, food):
+        ### move when key is pressed (if valid)###
         image = None
-
         direction = [0,0]
 
         if key[self.right_key]:
@@ -122,7 +125,6 @@ class Player(Character):
         if key[pg.K_p] or key[pg.K_SPACE]:
             raise GamePause
 
-
         if image != None: self.image = image
         new_pos = self.valid_move(direction, pattern, board_size)
 
@@ -138,9 +140,7 @@ class Player(Character):
 
         return food
 
-
 class Enemy(Character):
-    # enemies move automatically
     def __init__(self, position, players_pos, color = (243, 98, 102), image=None):
         super().__init__(position, color, image)
         self.prev_position = self.position
@@ -179,7 +179,7 @@ class Enemy(Character):
         return new_pos
 
     def plusMinus1(self, turn, index, pattern, board_size, enemies_pos):
-        # try +-1 on position index
+        ### try +-1 on position index ###
         for val in {-1, 1}:
             turn[index] = val
             new_pos = self.valid_move(turn, pattern, board_size, enemies_pos)
@@ -190,6 +190,7 @@ class Enemy(Character):
         return False
 
     def checkValue(self, turn, val, pattern, board_size, enemies_pos):
+        ### try multiplication by val on both positions in turn ###
         for i in range(2):
             temp_turn = turn.copy()
             temp_turn[i] *= val
@@ -202,6 +203,7 @@ class Enemy(Character):
 
 
     def move(self, pattern, board_size, players_pos, enemies_pos):
+        ### move automatically ###
         # TODO: zdarza mu się chodzić w kółko
 
         turn = self.turn(players_pos)
