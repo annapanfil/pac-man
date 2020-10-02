@@ -37,6 +37,7 @@ def set_start_pos(n: int, board: Board, screen, clock, invalid=set()) -> set:
 
     return characters_pos
 
+
 def show_msg(message: str, position: (int,int), font: pg.font, screen, color = (0,0,255)) -> None:
     ### split message by '\n' and show it ###
     screen.fill((0,0,0)) # clear screen
@@ -129,6 +130,7 @@ def board_save(tab: list, players_pos: set, enemies_pos: set) -> int:
 
     window = sg.Window("Board creator", layout, finalize=True, return_keyboard_events=True)
 
+    # ASK FOR FILENAME
     while(True):
         event, values = window.read()
         if event == sg.WIN_CLOSED:
@@ -148,7 +150,18 @@ def board_save(tab: list, players_pos: set, enemies_pos: set) -> int:
             window.close()
             return 1
 
-    savetxt(f'boards/{f}', tab, fmt='%d', delimiter=' ', newline='\n')
+    # WRITE TO FILE
+    f=open(f'boards/{f}', 'w')
+    for p in players_pos: f.write(str(p[0]) + "," + str(p[1]) + " ")
+    f.write('\n')
+    for e in enemies_pos: f.write(str(e[0]) + "," + str(p[1]) + " ")
+
+    for row in tab:
+        f.write('\n')
+        for i in row: f.write(str(i) + " ")
+    f.close()
+    # savetxt(f'boards/{f}', tab, fmt='%d', delimiter=' ', newline='\n')
+
     return 0
 
 
