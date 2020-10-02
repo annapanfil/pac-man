@@ -13,7 +13,7 @@ languages = {
     'welcome': '\nWelcome to Pac man game!\n',
     'start': 'Start game',
     'settings': 'Settings',
-    'creator': "board creator",
+    'creator': "Board creator",
     'info': 'Info',
     'exit': "Exit",
 
@@ -42,8 +42,8 @@ languages = {
 
     #BOARD CREATOR
     's': "press S\nto save",
-    'player_pos': "Choose 2 players'\nstart positions",
-    'enemies_pos': "Choose 4 eniemies'\nstart positions"
+    'players_pos': "Choose 2 players'\nstart positions",
+    'enemies_pos': "Choose 4 enemies'\nstart positions"
     },
 
 'pl':{
@@ -85,7 +85,7 @@ languages = {
 
     #TWORZENIE PLANSZ
     's': "naciśnij S,\nby zapisać",
-    'player_pos': "Wybierz 2 pozycje\nstartowe graczy",
+    'players_pos': "Wybierz 2 pozycje\nstartowe graczy",
     'enemies_pos': "Wybierz 4 pozycje\nstartowe wrogów"
     }
 }

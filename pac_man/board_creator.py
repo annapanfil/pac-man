@@ -30,12 +30,20 @@ def set_start_pos(n: int, board: Board, screen, clock, invalid=set()) -> set:
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                players_pos.add(None)
+                characters_pos.add(None)
         clock.tick(50)
 
     clock.tick(1)
 
     return characters_pos
+
+def show_msg(message: str, position: (int,int), font: pg.font, screen, color = (0,0,255)) -> None:
+    ### split message by '\n' and show it ###
+    screen.fill((0,0,0)) # clear screen
+    for line in message.split("\n"):
+        msg = font.render(line, True, color)
+        screen.blit(msg, position)
+        position =  (position[0], position[1]+font.get_height())
 
 
 def board_menu() -> int:
@@ -65,22 +73,18 @@ def board_draw(size: int, lang: dict) -> (list, set):
     ### allow user to draw the board and set positions of characters ###
     pg.init()
     pixel = 20
-    screen = pg.display.set_mode((size+10*pixel, size))
+    screen = pg.display.set_mode((size+11*pixel, size))
     pg.display.set_caption("Board creator")
     clock = pg.time.Clock()
     board = Board(screen = screen, field_size = pixel, pattern = zeros((int(size/pixel), int(size/pixel)), dtype=int))
     dark_button = pg.Rect((size+2*pixel, int(size/2)-2*pixel), (pixel*2, pixel*2))
     light_button = pg.Rect((size+2*pixel, int(size/2)), (pixel*2, pixel*2))
     font = pg.font.SysFont(None, 30)
-
-    msg = font.render(lang['s'].split("\n")[0], True, (0,0,255))
     msg_pos = (size + pixel, int(size/2)+4*pixel)
-    msg2 = font.render(lang['s'].split("\n")[1], True, (0,0,255))
-    msg2_pos = (size + pixel, int(size/2)+4*pixel+30)
+
+    show_msg(lang['s'], msg_pos, font, screen)
 
     # DRAW BOARD
-    screen.blit(msg, msg_pos)
-    screen.blit(msg2, msg2_pos)
     running = True
     color = 1
     while running:
@@ -109,19 +113,16 @@ def board_draw(size: int, lang: dict) -> (list, set):
     clock.tick(1)
 
     # SET CHARACTERS' START POSITION
-    msg = font.render(lang['player_pos'].split("\n")[0], True, (0,0,255))
-    msg2 = font.render(lang['player_pos'].split("\n")[1], True, (0,0,255))
-    screen.blit(msg, msg_pos)
-    screen.blit(msg2, msg2_pos)
-
+    show_msg(lang['players_pos'], msg_pos, font, screen)
     players_pos = set_start_pos(2, board, screen, clock)
+    show_msg(lang['enemies_pos'], msg_pos, font, screen)
     enemies_pos = set_start_pos(4, board, screen, clock, players_pos)
 
     pg.quit()
-    return (board.pattern, players_pos) if None not in (players_pos | enemies_pos) else []
+    return (board.pattern, players_pos, enemies_pos) if None not in (players_pos | enemies_pos) else []
 
 
-def board_save(tab: list, players_pos: set) -> int:
+def board_save(tab: list, players_pos: set, enemies_pos: set) -> int:
     ### save board to file, ask user for filename ###
     layout = [[sg.Text("Board name: "), sg.InputText(default_text="my_board", key="filename")],
               [sg.Button("Save", key="-OK-"), sg.Button("Cancel", key="-CANCEL-")]]
