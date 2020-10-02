@@ -1,5 +1,13 @@
 """
 player, enemy, board and food classes (including methods for displaying, movement and )
+
+colors:
+light blue = (98, 175, 243)
+dark blue = (98, 102, 243)
+green = (175, 243, 98)
+yellow green = (218, 247, 16)
+orange = (243, 166, 98)
+red = (243, 98, 102)
 """
 
 import pygame as pg

@@ -8,29 +8,30 @@ from numpy import savetxt, zeros
 from .classes import Board
 from .language import *
 
-def set_start_pos(board: Board, screen, clock) -> set:
+def set_start_pos(n: int, board: Board, screen, clock, invalid=set()) -> set:
     ### create set of start positions (from user input) ###
     characters_pos = set()
     pixel = board.field_size
-    while len(characters_pos) < 2:
+    while len(characters_pos) < n:
         if pg.mouse.get_pressed()[0] == True:
             pos = pg.mouse.get_pos()
             if pos[0]<board.screen_size:              # board
                 pos_in_pixels = (int(pos[0]/pixel), int(pos[1]/pixel))
-                characters_pos.add(pos_in_pixels)
-                print(characters_pos)
-
+                if pos_in_pixels not in invalid: characters_pos.add(pos_in_pixels)
 
         board.display()
         for ch in characters_pos:
             pg.draw.rect(screen, (0,0,0), pg.Rect((ch[0]*pixel, ch[1]*pixel), (pixel, pixel)))
+
+        for ch in invalid:
+            pg.draw.rect(screen, (243, 166, 98), pg.Rect((ch[0]*pixel, ch[1]*pixel), (pixel, pixel)))
 
         pg.display.update()
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 players_pos.add(None)
-        clock.tick(100)
+        clock.tick(50)
 
     clock.tick(1)
 
@@ -93,7 +94,7 @@ def board_draw(size: int, lang: dict) -> (list, set):
                 elif pos[1] >=  int(size/2) and pos[1] <= int(size/2)+2*pixel: # light button
                     color = 0
 
-        clock.tick(1000)
+        clock.tick(100)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -112,11 +113,9 @@ def board_draw(size: int, lang: dict) -> (list, set):
     msg2 = font.render(lang['player_pos'].split("\n")[1], True, (0,0,255))
     screen.blit(msg, msg_pos)
     screen.blit(msg2, msg2_pos)
-    players_pos = set_start_pos(board, screen, clock)
 
-    # TODO: enemies start position
-    enemies_pos = set_start_pos(board, screen, clock)
-
+    players_pos = set_start_pos(2, board, screen, clock)
+    enemies_pos = set_start_pos(4, board, screen, clock, players_pos)
 
     pg.quit()
     return (board.pattern, players_pos) if None not in (players_pos | enemies_pos) else []
