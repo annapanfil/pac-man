@@ -83,12 +83,12 @@ def game(personalize: dict) -> [int, int]:
                 keys = pg.key.get_pressed()
 
                 if enemies_round == 0:
-                    for e in enemies: e.move(board.pattern, board.sizeInFields, [p.position for p in players], [e.position for e in enemies])
+                    for e in enemies: e.move(board.pattern, [p.position for p in players], [e.position for e in enemies])
                     enemies_round = 1
                 else: enemies_round -= 1
 
                 for player in players:
-                    food = player.move(keys, board.pattern, board.sizeInFields, food)
+                    food = player.move(keys, board.pattern, food)
                     player.check_kill([e.position for e in enemies])
 
         except GameOver:
