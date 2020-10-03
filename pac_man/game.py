@@ -2,10 +2,30 @@
 create game window, control game logic
 """
 
-from numpy import loadtxt
+from numpy import loadtxt, ndarray
 import pygame as pg
 from .classes import *
 from .language import *
+
+def board_from_file(filename: str) -> (set, set, ndarray):
+    filename = "boards/" + filename
+    players_pos = set()
+    enemies_pos = set()
+    f=open(filename)
+    line = f.readline().split()
+    print("players", line)
+    for pos in line:
+        players_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
+        print(players_pos)
+    line = f.readline().split()
+    print("enemies", line)
+    for pos in line:
+        enemies_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
+        print(enemies_pos)
+    f.close()
+    pattern = loadtxt(fname=filename, delimiter=" ", skiprows=2, dtype=int)
+    return (players_pos, enemies_pos, pattern)
+
 
 def display(board: Board, players: list, enemies: list, food:list) -> None:
     board.display()
@@ -15,14 +35,16 @@ def display(board: Board, players: list, enemies: list, food:list) -> None:
 
     pg.display.update()
 
-def game(personalize: dict) -> list:
+
+def game(personalize: dict) -> [int, int]:
     # INITIALIZE
     lang = languages[personalize['lang']]
     pixel = 20
-    pattern = loadtxt(fname="boards/" + personalize['board'], delimiter=" ", skiprows=0, dtype=int)
-
+    players_pos, enemies_pos, pattern = board_from_file(personalize['board'])
+    print(players_pos, enemies_pos)
     screen_size = len(pattern)*pixel
-    enemies_quantity = 1;
+    # TODO: choose enemies_quantity in settings
+    enemies_quantity = 4;
 
     pg.init()
     screen = pg.display.set_mode((screen_size, screen_size))
@@ -47,15 +69,14 @@ def game(personalize: dict) -> list:
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
     image = pg.image.load('graphics/player.png')
     image = pg.transform.scale(image, (pixel, pixel))
-    players = [Player([center-3, 20], controls, image = image)]
+    players = [Player(players_pos.pop(), controls, image = image)]
     if personalize['p2']:
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
-        players.append(Player([center+1, center], controls), image=image)
-        players[0].position[0]-= 1
+        players.append(Player(players_pos.pop(), controls, image=image))
 
     image = pg.image.load('graphics/enemy.png')
     image = pg.transform.scale(image, (pixel, pixel))
-    enemies = [Enemy([center-1,2*i], [p.position for p in players], image=image) for i in range(enemies_quantity)]
+    enemies = [Enemy(enemies_pos.pop(), [p.position for p in players], image=image) for i in range(enemies_quantity)]
 
     # # display 3...2...1...
     # font_big = pg.font.SysFont(None, 300)

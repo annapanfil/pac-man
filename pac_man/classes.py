@@ -12,7 +12,8 @@ red = (243, 98, 102)
 
 import pygame as pg
 import random
-import pdb
+from numpy import ndarray
+# import pdb
 
 # TODO: różne obrazki dla różnych graczy
 
@@ -63,7 +64,7 @@ class Board():
         self.pattern[y][x] = color
 
 class Character():
-    def __init__(self, position: list, color = (175, 243, 98), image = None):
+    def __init__(self, position: tuple, color = (175, 243, 98), image = None):
         self.position = position
         self.color = color
         self.org_image = image
@@ -79,7 +80,7 @@ class Character():
 
     def valid_move(self, turn: list, pattern: list, board_size: int) -> tuple:
         ### check if move is valid ###
-        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
+        new_pos = (self.position[0] + turn[0], self.position[1] + turn[1])
 
         # hit the border – teleport
         if new_pos[0] < 0: new_pos[0] = board_size-1
@@ -99,7 +100,7 @@ class Character():
                 raise GameOver
 
 class Player(Character):
-    def __init__(self, position: list, controls: tuple, color = (218, 247, 16), image = None):
+    def __init__(self, position: tuple, controls: tuple, color = (218, 247, 16), image = None):
         super().__init__(position, color, image)
         self.left_key = controls[0]
         self.right_key = controls[1]
@@ -107,7 +108,7 @@ class Player(Character):
         self.down_key = controls[3]
         self.score = 0
 
-    def move(self, key, pattern, board_size, food):
+    def move(self, key, pattern: ndarray, board_size: int, food:list) -> list :
         ### move when key is pressed (if valid)###
         image = None
         direction = [0,0]
@@ -171,13 +172,12 @@ class Enemy(Character):
         return turn
 
 
-    def valid_move(self, turn: list, pattern: list, board_size: int, enemies_pos:list) -> tuple:
+    def valid_move(self, turn: tuple, pattern: list, board_size: int, enemies_pos:list) -> tuple:
         new_pos = Character.valid_move(self, turn, pattern, board_size)
 
         # check if not going back
         if new_pos == self.prev_position:
             return False
-
 
         # check if not on other enemy:
         for e in enemies_pos:

@@ -4,7 +4,7 @@ allow user to draw new board and save it to text file
 
 import pygame as pg
 import PySimpleGUI as sg
-from numpy import savetxt, zeros
+from numpy import savetxt, zeros, ndarray
 from .classes import Board
 from .language import *
 
@@ -70,13 +70,14 @@ def board_menu() -> int:
             return int(values["board_size"])
 
 
-def board_draw(size: int, lang: dict) -> (list, set):
+def board_draw(size: int, lang: dict) -> (ndarray, set):
     ### allow user to draw the board and set positions of characters ###
     pg.init()
     pixel = 20
     screen = pg.display.set_mode((size+11*pixel, size))
     pg.display.set_caption("Board creator")
     clock = pg.time.Clock()
+    # TODO: choose existing board
     board = Board(screen = screen, field_size = pixel, pattern = zeros((int(size/pixel), int(size/pixel)), dtype=int))
     dark_button = pg.Rect((size+2*pixel, int(size/2)-2*pixel), (pixel*2, pixel*2))
     light_button = pg.Rect((size+2*pixel, int(size/2)), (pixel*2, pixel*2))
@@ -123,7 +124,7 @@ def board_draw(size: int, lang: dict) -> (list, set):
     return (board.pattern, players_pos, enemies_pos) if None not in (players_pos | enemies_pos) else []
 
 
-def board_save(tab: list, players_pos: set, enemies_pos: set) -> int:
+def board_save(tab: ndarray, players_pos: set, enemies_pos: set) -> int:
     ### save board to file, ask user for filename ###
     layout = [[sg.Text("Board name: "), sg.InputText(default_text="my_board", key="filename")],
               [sg.Button("Save", key="-OK-"), sg.Button("Cancel", key="-CANCEL-")]]
@@ -158,7 +159,8 @@ def board_save(tab: list, players_pos: set, enemies_pos: set) -> int:
 
     for row in tab:
         f.write('\n')
-        for i in row: f.write(str(i) + " ")
+        f.write(str(row[0]))
+        for i in row[1:]: f.write(" " + str(i))
     f.close()
     # savetxt(f'boards/{f}', tab, fmt='%d', delimiter=' ', newline='\n')
 
