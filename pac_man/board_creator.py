@@ -18,7 +18,7 @@ def set_start_pos(n: int, board: Board, screen, clock, invalid=set()) -> set:
             if pos[0]<board.screen_size:              # board
                 pos_in_pixels = (int(pos[0]/pixel), int(pos[1]/pixel))
                 if pos_in_pixels not in invalid: characters_pos.add(pos_in_pixels)
-
+                print(pos_in_pixels)
         board.display()
         for ch in characters_pos:
             pg.draw.rect(screen, (0,0,0), pg.Rect((ch[0]*pixel, ch[1]*pixel), (pixel, pixel)))
@@ -155,7 +155,7 @@ def board_save(tab: ndarray, players_pos: set, enemies_pos: set) -> int:
     f=open(f'boards/{f}', 'w')
     for p in players_pos: f.write(str(p[0]) + "," + str(p[1]) + " ")
     f.write('\n')
-    for e in enemies_pos: f.write(str(e[0]) + "," + str(p[1]) + " ")
+    for e in enemies_pos: f.write(str(e[0]) + "," + str(e[1]) + " ")
 
     for row in tab:
         f.write('\n')
