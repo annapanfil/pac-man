@@ -1,31 +1,11 @@
 """
 create game window, control game logic
 """
+# IDEA: change players, enemies and food from lists to sets
 
-from numpy import loadtxt, ndarray
 import pygame as pg
 from .classes import *
 from .language import *
-
-def board_from_file(filename: str) -> (set, set, ndarray):
-    filename = "boards/" + filename
-    players_pos = set()
-    enemies_pos = set()
-    f=open(filename)
-    line = f.readline().split()
-    print("players", line)
-    for pos in line:
-        players_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
-        print(players_pos)
-    line = f.readline().split()
-    print("enemies", line)
-    for pos in line:
-        enemies_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
-        print(enemies_pos)
-    f.close()
-    pattern = loadtxt(fname=filename, delimiter=" ", skiprows=2, dtype=int)
-    return (players_pos, enemies_pos, pattern)
-
 
 def display(board: Board, players: list, enemies: list, food:list) -> None:
     board.display()
@@ -40,29 +20,26 @@ def game(personalize: dict) -> [int, int]:
     # INITIALIZE
     lang = languages[personalize['lang']]
     pixel = 20
-    players_pos, enemies_pos, pattern = board_from_file(personalize['board'])
-    print(players_pos, enemies_pos)
-    screen_size = len(pattern)*pixel
-    # TODO: choose enemies_quantity in settings
-    enemies_quantity = 4;
+    enemies_quantity = 4;  # TODO: choose enemies_quantity in settings
+
+    board = Board()
+    center = int(board.sizeInFields/2)
+    players_pos, enemies_pos = board.from_file(personalize['board'])
+    screen_size = len(board.pattern)*board.field_size
 
     pg.init()
     screen = pg.display.set_mode((screen_size, screen_size))
+    board.set_screen(screen)
     # os.environ['SDL_VIDEO_WINDOW_POS'] = '1000,1000' # sets window position – DOESN'T WORK
-
     pg.display.set_caption("Pac man")
     #icon = pg.image.load("pac_man/icon.png")
     # pg.display.set_icon(icon)
-
     clock = pg.time.Clock()
-
-    board = Board(screen, pattern, pixel)
-    center = int(board.sizeInFields/2)
 
     food = []
     for i in range(board.sizeInFields):
         for j in range(board.sizeInFields):
-            if pattern[j][i] == 0:
+            if board.pattern[j][i] == 0:
                 food.append(Food((i, j)))
     food_quantity = len(food)
 

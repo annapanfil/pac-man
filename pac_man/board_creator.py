@@ -1,10 +1,11 @@
 """
 allow user to draw new board and save it to text file
 """
+# TODO: choose existing board
 
 import pygame as pg
 import PySimpleGUI as sg
-from numpy import savetxt, zeros, ndarray
+from numpy import zeros, ndarray
 from .classes import Board
 from .language import *
 
@@ -77,7 +78,6 @@ def board_draw(size: int, lang: dict) -> (ndarray, set):
     screen = pg.display.set_mode((size+11*pixel, size))
     pg.display.set_caption("Board creator")
     clock = pg.time.Clock()
-    # TODO: choose existing board
     board = Board(screen = screen, field_size = pixel, pattern = zeros((int(size/pixel), int(size/pixel)), dtype=int))
     dark_button = pg.Rect((size+2*pixel, int(size/2)-2*pixel), (pixel*2, pixel*2))
     light_button = pg.Rect((size+2*pixel, int(size/2)), (pixel*2, pixel*2))

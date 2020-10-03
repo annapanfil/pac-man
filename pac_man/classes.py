@@ -12,7 +12,7 @@ red = (243, 98, 102)
 
 import pygame as pg
 import random
-from numpy import ndarray
+from numpy import zeros, ndarray, loadtxt
 # import pdb
 
 # TODO: różne obrazki dla różnych graczy
@@ -31,21 +31,23 @@ class GamePause(Exception):
     pass
 
 class Board():
-    def __init__(self, screen, pattern, field_size = 20, light_color=(98, 175, 243), dark_color=(98, 102, 243)):
+    def __init__(self, screen=None, field_size = 20, pattern = zeros(2), light_color=(98, 175, 243), dark_color=(98, 102, 243)):
         self.field_size = field_size     # pixel
         self.screen = screen             # pygame surface
         self.light_color = light_color
         self.dark_color = dark_color
-        self.pattern = pattern           # numpy array
+        self.pattern = pattern
 
     @property
-    def sizeInFields(self):
-        return int(self.screen_size/self.field_size)
+    def sizeInFields(self) -> int:
+        return len(self.pattern)
 
     @property
-    def screen_size(self):
+    def screen_size(self) -> int:
         return self.screen.get_width()
 
+    def set_screen(self, screen):
+        self.screen = screen
 
     def display(self):
         for i in range(len(self.pattern)):
@@ -56,12 +58,25 @@ class Board():
                 else:
                     pg.draw.rect(self.screen, self.light_color, rectangle)
 
-    def draw(self, position: tuple, color = 1):
+    def draw(self, position: tuple, color = 1) -> None:
         ### change board pattern ###
         x = int(position[0]/self.field_size)
         y = int(position[1]/self.field_size)
-        # print(position, x, y)
         self.pattern[y][x] = color
+
+    def from_file(self, filename: str) -> (set, set):
+        ### read board and characters' positions from file ###
+        filename = "boards/" + filename
+        players_pos = set()
+        enemies_pos = set()
+
+        f=open(filename)
+        for pos in f.readline().split(): players_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
+        for pos in f.readline().split(): enemies_pos.add((int(pos.split(",")[0]), int(pos.split(",")[1])))
+        f.close()
+        self.pattern = loadtxt(fname=filename, delimiter=" ", skiprows=2, dtype=int)
+
+        return (players_pos, enemies_pos)
 
 class Character():
     def __init__(self, position: tuple, color = (175, 243, 98), image = None):
@@ -80,7 +95,7 @@ class Character():
 
     def valid_move(self, turn: list, pattern: list, board_size: int) -> tuple:
         ### check if move is valid ###
-        new_pos = (self.position[0] + turn[0], self.position[1] + turn[1])
+        new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
 
         # hit the border – teleport
         if new_pos[0] < 0: new_pos[0] = board_size-1
@@ -92,7 +107,7 @@ class Character():
         elif pattern[new_pos[1]][new_pos[0]] == 1:
             return False
 
-        return new_pos
+        return tuple(new_pos)
 
     def check_kill(self, enemies_pos):
         for e in enemies_pos:
