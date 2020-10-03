@@ -170,6 +170,7 @@ def board_save(tab: ndarray, players_pos: set, enemies_pos: set) -> int:
 def board_main(language: dict):
     size = board_menu()
     pattern = board_draw(size, language)
+    print(pattern)
     if pattern != []:
         error = board_save(*pattern)
 

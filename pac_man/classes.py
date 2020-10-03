@@ -93,10 +93,10 @@ class Character():
             rectangle = pg.Rect((self.position[0]*board.field_size, self.position[1]*board.field_size), (board.field_size, board.field_size))
             pg.draw.rect(board.screen, self.color, rectangle)
 
-    def valid_move(self, turn: list, pattern: list, board_size: int) -> tuple:
+    def valid_move(self, turn: list, pattern: ndarray) -> tuple:
         ### check if move is valid ###
         new_pos = [self.position[0] + turn[0], self.position[1] + turn[1]]
-
+        board_size = len(pattern)
         # hit the border – teleport
         if new_pos[0] < 0: new_pos[0] = board_size-1
         elif new_pos[0] == board_size: new_pos[0] = 0
@@ -123,7 +123,7 @@ class Player(Character):
         self.down_key = controls[3]
         self.score = 0
 
-    def move(self, key, pattern: ndarray, board_size: int, food:list) -> list :
+    def move(self, key, pattern: ndarray, food:list) -> list :
         ### move when key is pressed (if valid)###
         image = None
         direction = [0,0]
@@ -150,7 +150,7 @@ class Player(Character):
             raise GamePause
 
         if image != None: self.image = image
-        new_pos = self.valid_move(direction, pattern, board_size)
+        new_pos = self.valid_move(direction, pattern)
 
         if new_pos != False:  # if cannot move, stay
             self.position = new_pos
@@ -158,7 +158,7 @@ class Player(Character):
             # check if eating food
             for i in range(len(food)):
                 if tuple(new_pos) == food[i].position:
-                    food[i].eat(self, board_size)
+                    food[i].eat(self)
                     food.pop(i)
                     break
 
@@ -187,8 +187,8 @@ class Enemy(Character):
         return turn
 
 
-    def valid_move(self, turn: tuple, pattern: list, board_size: int, enemies_pos:list) -> tuple:
-        new_pos = Character.valid_move(self, turn, pattern, board_size)
+    def valid_move(self, turn: tuple, pattern: list, enemies_pos:list) -> tuple:
+        new_pos = Character.valid_move(self, turn, pattern)
 
         # check if not going back
         if new_pos == self.prev_position:
@@ -201,23 +201,23 @@ class Enemy(Character):
 
         return new_pos
 
-    def plusMinus1(self, turn, index, pattern, board_size, enemies_pos):
+    def plusMinus1(self, turn, index, pattern, enemies_pos):
         ### try +-1 on position index ###
         for val in {-1, 1}:
             turn[index] = val
-            new_pos = self.valid_move(turn, pattern, board_size, enemies_pos)
+            new_pos = self.valid_move(turn, pattern, enemies_pos)
 
             if new_pos != False:
                 return (new_pos, turn)
 
         return False
 
-    def checkValue(self, turn, val, pattern, board_size, enemies_pos):
+    def checkValue(self, turn, val, pattern, enemies_pos):
         ### try multiplication by val on both positions in turn ###
         for i in range(2):
             temp_turn = turn.copy()
             temp_turn[i] *= val
-            new_pos = self.valid_move(temp_turn, pattern, board_size,enemies_pos)
+            new_pos = self.valid_move(temp_turn, pattern, enemies_pos)
 
             if new_pos != False:
                 return (new_pos,  temp_turn)
@@ -225,16 +225,16 @@ class Enemy(Character):
         return False
 
 
-    def move(self, pattern, board_size, players_pos, enemies_pos):
+    def move(self, pattern, players_pos, enemies_pos):
         ### move automatically ###
         # TODO: zdarza mu się chodzić w kółko
 
         turn = self.turn(players_pos)
-        new_pos = self.valid_move(turn, pattern, board_size, enemies_pos)
+        new_pos = self.valid_move(turn, pattern, enemies_pos)
 
         if new_pos == False:  # if cannot move, choose other place
             # continue movement
-            new_pos = self.valid_move(self.prev_turn, pattern, board_size, enemies_pos)
+            new_pos = self.valid_move(self.prev_turn, pattern, enemies_pos)
 
             if new_pos != False:
                 turn = self.prev_turn
@@ -250,7 +250,7 @@ class Enemy(Character):
                         # if not, try N and S
                         # if not, try NE and SE
 
-                        temp = self.plusMinus1(turn, index, pattern, board_size, enemies_pos)
+                        temp = self.plusMinus1(turn, index, pattern, enemies_pos)
                         if temp != False:
                             new_pos = temp[0]
                             turn = temp[1]
@@ -263,7 +263,7 @@ class Enemy(Character):
                         # try N and W
                         # if not, try NE and SW
 
-                        temp = self.checkValue(turn, val, pattern, board_size, enemies_pos)
+                        temp = self.checkValue(turn, val, pattern, enemies_pos)
 
                         if temp != False:
                             new_pos = temp[0]
@@ -273,7 +273,7 @@ class Enemy(Character):
                     if new_pos == False:
                         # if not, try E and S
 
-                        temp = self.checkValue([-x for x in turn], 0, pattern, board_size, enemies_pos)
+                        temp = self.checkValue([-x for x in turn], 0, pattern, enemies_pos)
                         if temp != False:
                             new_pos = temp[0]
                             turn = temp[1]
@@ -281,7 +281,7 @@ class Enemy(Character):
                 if new_pos == False:
                     # E / SE
                     turn = [-x for x in turn]   # opposite direction
-                    new_pos = self.valid_move(turn, pattern, board_size, enemies_pos)
+                    new_pos = self.valid_move(turn, pattern, enemies_pos)
 
                     if new_pos == False:    # trapped
                         new_pos = self.prev_position
@@ -301,6 +301,6 @@ class Food():
         circle_center = (int(self.position[0]*field + field/2), int(self.position[1]*field + field/2))
         pg.draw.circle(board.screen, self.color, circle_center, int(field/4))
 
-    def eat(self, player, board_size):
+    def eat(self, player):
         player.score += 1
         del(self)
