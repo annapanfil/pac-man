@@ -6,6 +6,7 @@ allow user to draw new board and save it to text file
 import pygame as pg
 import PySimpleGUI as sg
 from numpy import zeros, ndarray
+from os import listdir
 from .classes import Board
 from .language import *
 
@@ -48,16 +49,22 @@ def show_msg(message: str, position: (int,int), font: pg.font, screen, color = (
         position =  (position[0], position[1]+font.get_height())
 
 
-def board_menu() -> int:
+def board_menu(lang: dict) -> int:
     ### show menu (choose board size) ###
-    layout = [[sg.Text("Board size"), sg.Slider(range=(120, 1000), default_value=480,
-                resolution = 40, orientation='horizontal', key="board_size")],
+    choose_size = sg.Frame("New board", layout=[[sg.Text("Board size"), sg.Slider(range=(120, 1000), default_value=480,
+              resolution = 40, orientation='horizontal', key="board_size")]], key="size")
+    choose_board = sg.Frame("Edit board", layout=[[sg.Text(lang['board']), sg.OptionMenu(listdir('./boards'), key='board')]])
+    layout = [[sg.Radio(lang['new_board'], group_id=1, default=True, key="new", enable_events=True),
+               sg.Radio(lang['edit_board'], group_id=1, default=False, key="edit", enable_events=True)],
+               [choose_size],
+               [choose_board],
               [sg.Button("OK", key="-OK-")]]
 
     window = sg.Window("Board creator", layout, finalize=True, return_keyboard_events=True)
 
     while(True):
         event, values = window.read()
+        print(event, values)
         if event == sg.WIN_CLOSED:
             return(values["board_size"])
 
@@ -69,6 +76,14 @@ def board_menu() -> int:
         if event == "-OK-":
             window.Close()
             return int(values["board_size"])
+
+        if event == "new":
+            choose_size.unhide_row()
+            choose_board.hide_row()
+
+        if event == "edit":
+            choose_size.hide_row()
+            choose_board.unhide_row()
 
 
 def board_draw(size: int, lang: dict) -> (ndarray, set):
@@ -115,6 +130,7 @@ def board_draw(size: int, lang: dict) -> (ndarray, set):
     clock.tick(1)
 
     # SET CHARACTERS' START POSITION
+    # BUG: błąd przy zamknięciu okna
     show_msg(lang['players_pos'], msg_pos, font, screen)
     players_pos = set_start_pos(2, board, screen, clock)
     show_msg(lang['enemies_pos'], msg_pos, font, screen)
@@ -168,14 +184,14 @@ def board_save(tab: ndarray, players_pos: set, enemies_pos: set) -> int:
 
 
 def board_main(language: dict):
-    size = board_menu()
-    pattern = board_draw(size, language)
-    print(pattern)
-    if pattern != []:
-        error = board_save(*pattern)
-
-        if error: print("Not saved")
-        else: print("Saved")
+    size = board_menu(language)
+    # pattern = board_draw(size, language)
+    # print(pattern)
+    # if pattern != []:
+    #     error = board_save(*pattern)
+    #
+    #     if error: print("Not saved")
+    #     else: print("Saved")
 
     return 0
 

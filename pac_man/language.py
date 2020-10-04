@@ -41,9 +41,12 @@ languages = {
     'play_again': "Play again",
 
     #BOARD CREATOR
+    'new_board': "Create new board",
+    'edit_board': "Edit existing board",
+    'board_size': "Board size",
     's': "press S\nto save",
     'players_pos': "Choose 2 players'\nstart positions",
-    'enemies_pos': "Choose 4 enemies'\nstart positions"
+    'enemies_pos': "Choose 4 enemies'\nstart positions",
     },
 
 'pl':{
@@ -84,8 +87,11 @@ languages = {
     'play_again': "Zagraj ponownie",
 
     #TWORZENIE PLANSZ
+    'new_board': "Utwórz nową planszę",
+    'edit_board': "Edytuj istniejącą planszę",
+    'board_size': "Wielkość planszy",
     's': "naciśnij S,\nby zapisać",
     'players_pos': "Wybierz 2 pozycje\nstartowe graczy",
-    'enemies_pos': "Wybierz 4 pozycje\nstartowe wrogów"
+    'enemies_pos': "Wybierz 4 pozycje\nstartowe wrogów",
     }
 }
