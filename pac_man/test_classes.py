@@ -10,7 +10,6 @@ class TestCharacter(unittest.TestCase):
                     [1, 0 , 1]]
         self.pattern2 = [[0, 0],
                     [0, 0]]
-        print("setup")
 
     def test_valid_move(self):
         # hit the wall
@@ -22,5 +21,5 @@ class TestCharacter(unittest.TestCase):
         self.assertEqual(Character((0,0)).valid_move([0,-1], self.pattern2), (0,1))
         self.assertEqual(Character((0,1)).valid_move([0,1], self.pattern2), (0,0))
 
-if __name__ == '__main__': # w razie gdyby ktoś nie uruchomił jako moduł
+if __name__ == '__main__':
     unittest.main()
