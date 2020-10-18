@@ -23,7 +23,6 @@ def game(personalize: dict) -> [int, int]:
     enemies_quantity = 4;  # TODO: choose enemies_quantity in settings
 
     board = Board()
-    center = int(board.sizeInFields/2)
     players_pos, enemies_pos = board.from_file(personalize['board'])
     screen_size = len(board.pattern)*board.field_size
 
@@ -60,7 +59,7 @@ def game(personalize: dict) -> [int, int]:
     for i in range(3,0,-1):
         text = font_big.render(f"{i}", True, (0,0,0))
         display(board, players, enemies, food)
-        screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
+        screen.blit(text, ((int(board.sizeInFields/2)*board.field_size-50), (int(board.sizeInFields/2)*board.field_size-80)))
         pg.display.update()
         clock.tick(1)
 
