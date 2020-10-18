@@ -9,15 +9,21 @@ pygame
 
 pySimpleGUI
 
-## Setup
+## Setup (on Linux)
 
 You need to have [python] and pip installed
 
-$pip3 install -r requirements.txt
+Run `pac_man.sh` (If access denied, change permissions with `chmod u+x pac_man.sh`).
 
-**$python3 -m pac_man**
+Alternatively you can type everything by yourself:
 
-On Linux you can just run `pac_man.sh` (If access denied, try `chmod u+x pac_man.sh`)
+- Create virtual environment: `python3 -m venv myVenv`
+
+- Activate it: `source myVenv/bin/activate`
+
+- Install required libraries: `pip3 install -r requirements.txt`
+
+- **Launch game: `python3 -m pac_man`**
 
 ---
 
