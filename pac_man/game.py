@@ -19,7 +19,6 @@ def display(board: Board, players: list, enemies: list, food:list) -> None:
 def game(personalize: dict) -> [int, int]:
     # INITIALIZE
     lang = languages[personalize['lang']]
-    pixel = 20
     enemies_quantity = 4;  # TODO: choose enemies_quantity in settings
 
     board = Board()
@@ -45,26 +44,25 @@ def game(personalize: dict) -> [int, int]:
 
     controls = (pg.K_a, pg.K_d, pg.K_w, pg.K_s) if personalize['controls_p1'] == 'adws' else (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN)
     image = pg.image.load('graphics/player.png')
-    image = pg.transform.scale(image, (pixel, pixel))
+    image = pg.transform.scale(image, (PIXEL, PIXEL))
     players = [Player(players_pos.pop(), controls, image = image)]
     if personalize['p2']:
         controls = (pg.K_LEFT, pg.K_RIGHT, pg.K_UP, pg.K_DOWN) if personalize['controls_p1'] == 'adws' else (pg.K_a, pg.K_d, pg.K_w, pg.K_s)
         players.append(Player(players_pos.pop(), controls, image=image))
 
     image = pg.image.load('graphics/enemy.png')
-    image = pg.transform.scale(image, (pixel, pixel))
+    image = pg.transform.scale(image, (PIXEL, PIXEL))
     enemies = [Enemy(enemies_pos.pop(), [p.position for p in players], image=image) for i in range(enemies_quantity)]
 
-    # # display 3...2...1...
-    # font_big = pg.font.SysFont(None, 300)
-    # #
-    # for i in range(3,0,-1):
-    # #     text = font_big.render(f"{i}", True, (0,0,0))
-    #     display(board, players, enemies, food)
-    # #     screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
-    #     pg.display.update()
-    #     clock.tick(1)
-    # #
+    # display 3...2...1...
+    font_big = pg.font.SysFont(None, 300)
+
+    for i in range(3,0,-1):
+        text = font_big.render(f"{i}", True, (0,0,0))
+        display(board, players, enemies, food)
+        screen.blit(text, ((center*board.field_size)-50, (center*board.field_size)-80))
+        pg.display.update()
+        clock.tick(1)
     font = pg.font.SysFont(None, 30)
 
     # GAME LOOP
@@ -78,6 +76,9 @@ def game(personalize: dict) -> [int, int]:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+                if event.type == pg.KEYDOWN and event.key in {ord('p'), ord(' ')}:
+                    print("pause")
+                    paused = not(paused)
 
             if not(paused):
                 keys = pg.key.get_pressed()
@@ -91,22 +92,20 @@ def game(personalize: dict) -> [int, int]:
                     food = player.move(keys, board.pattern, food)
                     player.check_kill([e.position for e in enemies])
 
+            display(board, players, enemies, food)
+            print(paused)
+            if paused:  # TODO: unpause
+                text = font.render(lang['pause'], True, (0,0,0))
+                screen.blit(text, (screen_size-100, 20))
+                pg.display.update()
+
         except GameOver:
             running = False
-        except GamePause:
-            paused = not(paused)
-
-        display(board, players, enemies, food)
 
         # show_score:
         #     text = font.render(lang['score'].format(score), True, (0,0,0))
         #     screen.blit(text, (10, 20))
         #     pg.display.update()
-
-        if paused:  # TODO: unpause
-            text = font.render(lang['pause'], True, (0,0,0))
-            screen.blit(text, (screen_size-100, 20))
-            pg.display.update()
 
     clock.tick(1)
     pg.quit()

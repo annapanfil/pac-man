@@ -15,6 +15,8 @@ import random
 from numpy import zeros, ndarray, loadtxt
 # import pdb
 
+PIXEL = 20
+
 # TODO: różne obrazki dla różnych graczy
 
 # TODO: oddziaływanie gracz-gracz
@@ -145,9 +147,6 @@ class Player(Character):
             direction[1] += 1
             if direction[0] != 0: image = pg.transform.rotate(image,-45*direction[0]) # diagonally
             else: image = pg.transform.rotate(self.org_image, -90) # down
-
-        if key[pg.K_p] or key[pg.K_SPACE]:
-            raise GamePause
 
         if image != None: self.image = image
         new_pos = self.valid_move(direction, pattern)
