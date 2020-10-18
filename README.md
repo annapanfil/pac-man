@@ -1,5 +1,20 @@
 # Pac man
 
+Game with intelligent enemies and board creator modeled on classic Pac Man.
+
+---
+Eat food and try to clean whole board.
+
+Avoid ghosts.
+
+Change language, board and controls in settings.
+
+Create custom boards!
+
+Play with a friend in 2-players mode.
+
+---
+
 Written just for fun.
 
 ## Technologies
